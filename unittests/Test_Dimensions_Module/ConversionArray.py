@@ -2,7 +2,7 @@ import csv
 from random import sample, uniform
 from numpy import ndarray, array, stack, nditer
 
-from units.dimensions import *
+from dimensions import *
 
 
 
@@ -33,7 +33,7 @@ class ConversionArray(ndarray):
 
     __data_transmission_to_init = dict()
 
-    __MAX_NUMBER_OF_ITEMS = 50000
+    __MAX_NUMBER_OF_ITEMS = 200
 
 
 

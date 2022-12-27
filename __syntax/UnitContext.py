@@ -1,4 +1,4 @@
-from units.__syntax.Prefix import Prefix
+from __syntax.Prefix import Prefix
 
 
 class UnitContext(object):

@@ -1,4 +1,4 @@
-from units.dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
+from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 
 class SubstanceAmount(AbstractQuantity):

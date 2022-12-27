@@ -1,4 +1,4 @@
-from units.exceptions.UnitException import UnitException
+from exceptions.UnitException import UnitException
 
 
 class BadUnitException(UnitException):

@@ -1,6 +1,6 @@
 from numpy import ndarray, array, int8
-from units.__syntax import Unit
-from units.exceptions import BadUnitException
+from __syntax import Unit
+from exceptions import BadUnitException
 
 
 

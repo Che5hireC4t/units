@@ -1,11 +1,11 @@
 from re import compile, match
 from math import prod, pow as power
 
-from units.__syntax import Prefix, UnitContext, Unit
-from units.DimensionalArray import DimensionalArray
-from units.dimensions._MetaQuantity import _MetaQuantity
-from units.exceptions import MissingUnitException, BadUnitException
-from units.dimensions.exceptions import IncompatibleUnitError
+from __syntax import Prefix, UnitContext, Unit
+from DimensionalArray import DimensionalArray
+from dimensions._MetaQuantity import _MetaQuantity
+from exceptions import MissingUnitException, BadUnitException
+from dimensions.exceptions import IncompatibleUnitError
 
 
 

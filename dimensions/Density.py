@@ -1,4 +1,4 @@
-from units.dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray
+from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray
 
 
 class Density(AbstractQuantity):
