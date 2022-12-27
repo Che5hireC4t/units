@@ -12,7 +12,7 @@ class Pressure(AbstractQuantity):
             Unit('atm', 'norm.atmosphere', 101325.0): 101325.0,
             Unit('at', 'tech.atmosphere', 98066.5): 98066.5,
             Unit('cmwat', 'water-cm', 98.0638): 98.0638,
-            Unit('inwat', 'water-inch', 248.84): 248.84,
+            Unit('inwat', 'water-inch', 249.08890833333): 249.08890833333,
             Unit('mmHg', 'mercury-mm', 133.322): 133.322,
             Unit('torr', 'torr', 133.322): 133.322,
             Unit('inHg', 'mercury-inch', 3386.389): 3386.389,
