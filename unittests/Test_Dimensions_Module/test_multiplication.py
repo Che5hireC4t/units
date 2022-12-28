@@ -1,21 +1,17 @@
 import pytest
 from math import isnan
 
-from unittests.Test_Dimensions_Module.dependencies import ConversionArray
+from unittests.Test_Dimensions_Module.dependencies import get_simple_data_generator
 from unittests.Test_Dimensions_Module.conftest import MULTIPLICATION_DATA, CONVERSION_TABLES_INIT_DATA
 
 
 
 @pytest.mark.parametrize('dimension_name1, dimension_name2, expected_type', MULTIPLICATION_DATA)
 def test_yield_correct_dimension(dimension_name1: str, dimension_name2: str, expected_type):
-    conversion_table1 = ConversionArray(**CONVERSION_TABLES_INIT_DATA[dimension_name1])
-    conversion_table2 = ConversionArray(**CONVERSION_TABLES_INIT_DATA[dimension_name2])
-    yield_random1 = True if conversion_table1.size > 1000 else False
-    yield_random2 = True if conversion_table2.size > 1000 else False
-    dimension_class_1 = conversion_table1.dimension_class
-    dimension_class_2 = conversion_table2.dimension_class
-    for test_number1, symbol1 in conversion_table1.generate_test_values(yield_random1):
-        for test_number2, symbol2 in conversion_table2.generate_test_values(yield_random2):
+    dimension_class_1, data_generator1 = get_simple_data_generator(**CONVERSION_TABLES_INIT_DATA[dimension_name1])
+    dimension_class_2, data_generator2 = get_simple_data_generator(**CONVERSION_TABLES_INIT_DATA[dimension_name2])
+    for test_number1, symbol1 in data_generator1:
+        for test_number2, symbol2 in data_generator2:
             quantity1 = dimension_class_1(test_number1, symbol1)
             quantity2 = dimension_class_2(test_number2, symbol2)
             multiplied_quantity = quantity1 * quantity2
@@ -26,10 +22,8 @@ def test_yield_correct_dimension(dimension_name1: str, dimension_name2: str, exp
 
 @pytest.mark.parametrize('conversion_table_init_data', CONVERSION_TABLES_INIT_DATA.values())
 def test_multiply_by_adimensional(conversion_table_init_data, supply_fuzzer):
-    conversion_table = ConversionArray(**conversion_table_init_data)
-    dimension_class = conversion_table.dimension_class
-    yield_random = True if conversion_table.size > 1000 else False
-    for test_number, symbol in conversion_table.generate_test_values(yield_random):
+    dimension_class, data_generator = get_simple_data_generator(**conversion_table_init_data)
+    for test_number, symbol in data_generator:
         test_quantity = dimension_class(test_number, symbol)
         if bool(supply_fuzzer.randint(0, 1)):
             random_number = supply_fuzzer.logarithmic_randint()
