@@ -1,3 +1,4 @@
+from itertools import product
 from re import compile, match
 from math import prod, pow as power
 
@@ -268,26 +269,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __select_correct_candidates(self, candidates: list) -> tuple:
-        """
-        :param candidates:
-        :return:
-
-        Inspired from https://www.geeksforgeeks.org/python-program-to-get-all-unique-combinations-of-two-lists/
-        """
-        candidates_1 = [(class_, data) for class_, data in candidates[0].items()]
-        try:
-            candidates_2 = [(class_, data) for class_, data in candidates[1].items()]
-            unique_combinations = [(i, j) for i in candidates_1 for j in candidates_2]
-        except IndexError:
-            for cls, umap in candidates_1:
-                dimension_composition = {cls: umap[2]}
-                try:
-                    self.__check_dimension_composition(dimension_composition)
-                    return umap,
-                except ValueError:
-                    continue
-            raise ValueError() from None
-        for comb in unique_combinations:
+        candidates = [c.items() for c in candidates]
+        combinaisons = list(product(*candidates))  # Perhaps we can remove the "list" to keep only a generator
+        for comb in combinaisons:
             dimension_composition = {cls: umap[2] for cls, umap in comb}
             try:
                 self.__check_dimension_composition(dimension_composition)
