@@ -50,8 +50,8 @@ done internally. The result has the same unit that the first quantity:
 1.45359237 kg
 ```
 
-If you try to add / sub quantities belonging to different dimensions, an IncompatibleUnitError exception is raised.
-This exception is derived from TypeError.
+If you try to add / sub quantities belonging to different dimensions, an `IncompatibleUnitError` exception is raised.
+This exception is derived from `TypeError`.
 ```
 >>> from units.dimensions import Pressure
 >>> p = Pressure(1, 'torr')
