@@ -33,7 +33,7 @@ class ConversionArray(ndarray):
 
     __data_transmission_to_init = dict()
 
-    __MAX_NUMBER_OF_ITEMS = 200
+    __MAX_NUMBER_OF_ITEMS = 300
 
 
 
@@ -125,7 +125,15 @@ class ConversionArray(ndarray):
     def parse_combined_conversion_data(self, yield_random: bool = False) -> (float, str):
         self_as_array = self.__as_array
         number_of_yielded_items = 0
-        max_number_of_iterations = min(self.__MAX_NUMBER_OF_ITEMS, self.size)
+        max_number_of_iterations = min\
+            (
+                max
+                (
+                    1,
+                    self.__MAX_NUMBER_OF_ITEMS - len(self.__single_symbol_conversion_data)
+                ),
+                self.size
+            )
         if yield_random:
             pointer_to_offset = 0
             random_offsets_test = self.__setup_random_offsets(max_number_of_iterations)
