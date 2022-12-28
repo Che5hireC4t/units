@@ -33,7 +33,7 @@ as the newly cloned repository.
 1.0 m
 ```
 
-`Length` class is derived from the builtin class `float`. This also the case for all the dimension classes (Mass,
+`Length` class is derived from the builtin class `float`. This is also the case for all the dimension classes (Mass,
 Speed, etc...):
 ```
 >>> isinstance(l, float)
@@ -50,7 +50,8 @@ done internally. The result has the same unit that the first quantity:
 1.45359237 kg
 ```
 
-If you try to add / sub quantities belonging to different dimensions, an exception is raised:
+If you try to add / sub quantities belonging to different dimensions, an IncompatibleUnitError exception is raised.
+This exception is derived from TypeError.
 ```
 >>> from units.dimensions import Pressure
 >>> p = Pressure(1, 'torr')
