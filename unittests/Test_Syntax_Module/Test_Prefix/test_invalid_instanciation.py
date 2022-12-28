@@ -35,12 +35,15 @@ def test_raise_for_invalid_exponent(full_name, symbol, ten_exponent, _, __, supp
 
 
 
-fuzzer = Fuzzer()
-@pytest.mark.parametrize("invalid_symbol", (fuzzer.get_randstring(0, 10, fuzzer.ASCII_ALPHANUM) for _ in range(10)))
-@pytest.mark.parametrize("invalid_name", (fuzzer.get_randstring(0, 10, fuzzer.ASCII_ALPHANUM) for _ in range(10)))
-@pytest.mark.parametrize("invalid_exponent", (fuzzer.logarithmic_randint() for _ in range(10)))
-def test_fuzzing(invalid_symbol, invalid_name, invalid_exponent, supply_uninstantiated_prefix):
+@pytest.mark.parametrize("invalid_symbol", (_ for _ in range(10)))
+@pytest.mark.parametrize("invalid_name", (_ for _ in range(10)))
+@pytest.mark.parametrize("invalid_exponent", (_ for _ in range(10)))
+def test_fuzzing(invalid_symbol, invalid_name, invalid_exponent, supply_uninstantiated_prefix, supply_fuzzer):
     Prefix = supply_uninstantiated_prefix
+    fuzzer = supply_fuzzer
+    invalid_symbol = fuzzer.get_randstring(0, 10, fuzzer.ASCII_ALPHANUM)
+    invalid_name = fuzzer.get_randstring(0, 10, fuzzer.ASCII_ALPHANUM)
+    invalid_exponent = fuzzer.logarithmic_randint()
     with pytest.raises(ValueError):
         Prefix(invalid_name, invalid_symbol, invalid_exponent)
     assert len(Prefix._Prefix__instances) == 0
