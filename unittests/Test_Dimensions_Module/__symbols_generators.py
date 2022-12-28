@@ -1,11 +1,11 @@
-from units.__syntax.Prefix import Prefix
-from units.dimensions import *
+from __syntax.Prefix import Prefix
+from dimensions import *
 PREFIX_INSTANCES = \
     [
         Prefix(full_name, symbol, ten_exponent)
         for full_name, symbol, ten_exponent in getattr(Prefix, f"_{Prefix.__name__}__PREFIXES")
     ]
-from units.dimensions._MetaQuantity import _MetaQuantity
+from dimensions._MetaQuantity import _MetaQuantity
 
 
 
