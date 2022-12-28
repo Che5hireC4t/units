@@ -219,27 +219,6 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
-    # def _parse_unit_string2(self, unit_as_string: str) -> list:
-    #     split_units = unit_as_string.split()
-    #     unit_map = list()
-    #     for unit_str in split_units:
-    #         parsed = match(self._UNIT_DETECTION_REGEXP, unit_str)
-    #         symbol, prefix = self.__handle_particular_cases(unit_str)
-    #         if symbol is None and prefix is None:
-    #             group_prefix = parsed.group('prefix')
-    #             prefix = group_prefix if group_prefix else ''
-    #             symbol = parsed.group('symbol')
-    #         try:
-    #             exponent = int(parsed.group('exponent'))
-    #         except TypeError:  # If there is no exponent:
-    #             exponent = 1
-    #         unit = self.__get_unit_from_hint(symbol, exponent)
-    #         unit_map.append(UnitContext(exponent, unit, Prefix.init_from_single_value(prefix)))
-    #     return unit_map
-
-
-    # _TEST = tuple()
-
     def _parse_unit_string(self, unit_as_string: str) -> list:
         metaclass = self.__class__.__class__
         split_units = unit_as_string.split()
