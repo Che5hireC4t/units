@@ -166,6 +166,14 @@ class ConversionArray(ndarray):
 
 
 
+    def generate_test_values(self, yield_random: bool = False) -> (float, str):
+        for test_number, symbol in self.parse_specific_conversion_data():
+            yield test_number, symbol
+        for test_number, symbol in self.parse_combined_conversion_data(yield_random):
+            yield test_number, symbol
+
+
+
     def parse_specific_conversion_data(self) -> (float, str):
         single_symbol_conversion_data = self.__single_symbol_conversion_data
         for test_symbol, test_number in single_symbol_conversion_data.items():
