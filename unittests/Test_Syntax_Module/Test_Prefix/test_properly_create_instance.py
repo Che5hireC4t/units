@@ -1,5 +1,5 @@
 import pytest
-from unittests.Test_Syntax_Module.Test_Prefix.conftest import prefix_data_provider
+from unittests.Test_Syntax_Module.Test_Prefix.dependencies import prefix_data_provider
 
 
 @pytest.mark.parametrize('full_name, symbol, ten_exponent, _', (data for data in prefix_data_provider()))
