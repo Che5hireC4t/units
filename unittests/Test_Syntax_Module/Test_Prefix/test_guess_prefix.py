@@ -1,5 +1,5 @@
 import pytest
-from units.unittests.Test_Syntax_Module.Test_Prefix.conftest import prefix_data_provider
+from unittests.Test_Syntax_Module.Test_Prefix.conftest import prefix_data_provider
 
 
 

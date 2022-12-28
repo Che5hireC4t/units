@@ -1,7 +1,7 @@
 import pytest
 from math import isnan
-from units.unittests.Fuzzer import Fuzzer
-from units.unittests.Test_Dimensions_Module.__symbols_generators import generate_symbols
+from unittests.Fuzzer import Fuzzer
+from unittests.Test_Dimensions_Module.__symbols_generators import generate_symbols
 
 
 @pytest.mark.parametrize\

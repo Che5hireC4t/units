@@ -1,5 +1,5 @@
 import pytest
-from units.dimensions import *
+from dimensions import *
 
 
 MULTIPLICATION_DATA = \

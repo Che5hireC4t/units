@@ -1,5 +1,5 @@
 import pytest
-from units.__syntax import Prefix
+from __syntax import Prefix
 
 
 @pytest.fixture(scope='function')
@@ -11,7 +11,7 @@ def supply_uninstantiated_prefix():
 
 @pytest.fixture(scope='module')
 def supply_pre_instantiated_prefix() -> (type, tuple):
-    from units.__syntax.Prefix import Prefix
+    from __syntax.Prefix import Prefix
     prefix_map = getattr(Prefix, f"_{Prefix.__name__}__PREFIXES")
     instances = list()
     for input_data in prefix_map:

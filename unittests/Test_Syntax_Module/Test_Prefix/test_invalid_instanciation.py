@@ -1,7 +1,7 @@
 import pytest
 from random import randint
-from units.unittests.Fuzzer import Fuzzer
-from units.unittests.Test_Syntax_Module.Test_Prefix.conftest import prefix_data_provider
+from unittests.Fuzzer import Fuzzer
+from unittests.Test_Syntax_Module.Test_Prefix.conftest import prefix_data_provider
 
 
 @pytest.mark.parametrize('_', range(1000))
