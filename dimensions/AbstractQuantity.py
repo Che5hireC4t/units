@@ -270,7 +270,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
     def __select_correct_candidates(self, candidates: list) -> tuple:
         candidates = [c.items() for c in candidates]
-        combinaisons = list(product(*candidates))  # Perhaps we can remove the "list" to keep only a generator
+        combinaisons = product(*candidates)
         for comb in combinaisons:
             dimension_composition = {cls: umap[2] for cls, umap in comb}
             try:
