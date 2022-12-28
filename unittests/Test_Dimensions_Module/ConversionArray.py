@@ -108,7 +108,13 @@ class ConversionArray(ndarray):
             if sum(exponent_map) == 1:
                 raise FileNotFoundError
             csv_filename = f"{self.__CONVERSION_TABLE_PATH}/{test_dimension.__name__}.csv"
-            self.__single_symbol_conversion_data = self.__get_conversion_data(csv_filename, 1)
+            single_symbol_conversion_data = self.__get_conversion_data(csv_filename, 1)
+            single_symbol_conversion_data = \
+                {
+                    symbol: value * salt
+                    for symbol, value in single_symbol_conversion_data.items()
+                }
+            self.__single_symbol_conversion_data = single_symbol_conversion_data
         except FileNotFoundError:
             self.__single_symbol_conversion_data = dict()
         self.setflags(write=False)
