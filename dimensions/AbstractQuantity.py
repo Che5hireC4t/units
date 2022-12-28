@@ -119,13 +119,13 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __add__(self, other):
-        converted_other = other.convert(self)
+        converted_other = other.convert(self.symbol)
         return self.__class__(float(self) + float(converted_other), self.symbol)
 
 
 
     def __sub__(self, other):
-        converted_other = other.convert(self)
+        converted_other = other.convert(self.symbol)
         return self.__class__(float(self) - float(converted_other), self.symbol)
 
 
