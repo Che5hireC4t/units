@@ -123,7 +123,6 @@ class ConversionArray(ndarray):
 
 
     def parse_combined_conversion_data(self, yield_random: bool = False) -> (float, str):
-        # test = list()
         self_as_array = self.__as_array
         number_of_yielded_items = 0
         max_number_of_iterations = min(self.__MAX_NUMBER_OF_ITEMS, self.size)
@@ -138,7 +137,6 @@ class ConversionArray(ndarray):
                 test_number = float(next(test_data_iterator))
                 test_symbol_indexes = test_data_iterator.multi_index
                 test_symbol = self.__get_symbol_from_multi_index(test_symbol_indexes)
-                # test.append((test_number, test_symbol))
                 yield test_number, test_symbol
                 number_of_yielded_items += 1
 
@@ -157,8 +155,6 @@ class ConversionArray(ndarray):
         for test_number, source_symbol in self.parse_combined_conversion_data(yield_random):
             for expected_number, target_symbol in self.parse_combined_conversion_data(yield_random):
                 yield test_number, source_symbol, target_symbol, expected_number
-
-
 
 
 
