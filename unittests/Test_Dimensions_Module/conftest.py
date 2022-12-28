@@ -18,9 +18,8 @@ CONVERSION_TABLES_INIT_DATA =  \
 
 
 MULTIPLICATION_DATA = \
-    {
-        (Length, Length): Surface,
-        (Length, Surface): Volume,
-        (ElectricCurrent, Time): ElectricCharge,
-        (Length, Frequency): Speed
-    }
+    (
+        ('Length', 'Length', Surface),
+        ('Length', 'Surface', Volume),
+        ('Length', 'Frequency', Speed)
+    )
