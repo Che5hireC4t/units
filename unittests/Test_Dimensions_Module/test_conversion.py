@@ -6,7 +6,7 @@ from unittests.Test_Dimensions_Module.conftest import CONVERSION_TABLES_INIT_DAT
 
 
 
-@pytest.mark.parametrize('conversion_table_init_data', CONVERSION_TABLES_INIT_DATA)
+@pytest.mark.parametrize('conversion_table_init_data', CONVERSION_TABLES_INIT_DATA.values())
 def test_convert(conversion_table_init_data: dict):
     conversion_table = ConversionArray(**conversion_table_init_data)
     dimension_class = conversion_table.dimension_class
