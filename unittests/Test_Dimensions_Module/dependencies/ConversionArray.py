@@ -150,7 +150,7 @@ class ConversionArray(ndarray):
 
 
 
-    def generate_test_data(self, yield_random: bool = False) -> (float, str, str, float):
+    def generate_conversion_test_data(self, yield_random: bool = False) -> (float, str, str, float):
         for test_number, source_symbol in self.parse_specific_conversion_data():
             for expected_number, target_symbol in self.parse_specific_conversion_data():
                 yield test_number, source_symbol, target_symbol, expected_number
