@@ -223,20 +223,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         metaclass = self.__class__.__class__
         split_units = unit_as_string.split()
         unit_map = list()
-        if len(split_units) == 1:
-            for builtin_unit in self._UNITS:
-                prefix, unit, exponent = builtin_unit.match_raw_symbol(unit_as_string)
-                if (prefix, unit, exponent) != (None, None, None):
-                    unit_map.append(UnitContext(exponent, unit, prefix))
-                    return unit_map
         candidates = list()
         for unit_str in split_units:
             candidates_contexts = Unit.get_unit_from_raw_symbol(unit_str)
             candidates.append({metaclass.which_dimension_has(context[1]): context for context in candidates_contexts})
-            # prefix, unit, exponent = Unit.get_unit_from_raw_symbol(unit_str)
-            # dimension_class = metaclass.which_dimension_has(unit)
-            # dimension_composition[dimension_class] = exponent
-            # unit_map.append(UnitContext(exponent, unit, prefix))
         try:
             correct_candidates = self.__select_correct_candidates(candidates)
             [unit_map.append(UnitContext(exponent, unit, prefix)) for prefix, unit, exponent in correct_candidates]
