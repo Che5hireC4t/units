@@ -7,7 +7,7 @@ from unittests.Test_Dimensions_Module.conftest import CONVERSION_TABLES_INIT_DAT
 
 
 @pytest.mark.parametrize('conversion_table_init_data', CONVERSION_TABLES_INIT_DATA.values())
-def test_correctly_add_same_dimension(conversion_table_init_data: dict):
+def test_correctly_add_same_dimension(conversion_table_init_data: dict) -> None:
     dimension_class, conversion_values_generator = get_conversion_data_generator(**conversion_table_init_data)
     for test_number_1, symbol_1, symbol_2, test_number_2 in conversion_values_generator:
         expected_number = test_number_1 * 2
