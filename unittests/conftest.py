@@ -1,5 +1,5 @@
 import pytest
-from Fuzzer import Fuzzer
+from unittests.Fuzzer import Fuzzer
 
 
 @pytest.fixture(scope='session', autouse=True)
