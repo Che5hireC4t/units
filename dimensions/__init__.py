@@ -1,3 +1,63 @@
+"""
+This submodule contains all the dimension class.
+To import specific dimensions, do:
+>>> from dimensions import Time, ElectricCharge
+
+To import all dimensions, do:
+>>> from dimensions import *
+
+Here are the supported dimensions:
+
+
+
+███████╗ ██╗   ██╗ ███╗   ██╗ ██████╗   █████╗  ███╗   ███╗ ███████╗ ███╗   ██╗████████╗ █████╗  ██╗
+██╔════╝ ██║   ██║ ████╗  ██║ ██╔══██╗ ██╔══██╗ ████╗ ████║ ██╔════╝ ████╗  ██║╚══██╔══╝██╔══██╗ ██║
+█████╗   ██║   ██║ ██╔██╗ ██║ ██║  ██║ ███████║ ██╔████╔██║ █████╗   ██╔██╗ ██║   ██║   ███████║ ██║
+██╔══╝   ██║   ██║ ██║╚██╗██║ ██║  ██║ ██╔══██║ ██║╚██╔╝██║ ██╔══╝   ██║╚██╗██║   ██║   ██╔══██║ ██║
+██║      ╚██████╔╝ ██║ ╚████║ ██████╔╝ ██║  ██║ ██║ ╚═╝ ██║ ███████╗ ██║ ╚████║   ██║   ██║  ██║ ███████╗
+╚═╝       ╚═════╝  ╚═╝  ╚═══╝ ╚═════╝  ╚═╝  ╚═╝ ╚═╝     ╚═╝ ╚══════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚══════╝
+
+Time
+Mass
+Length
+Temperature
+SubstanceAmount
+ElectricCurrent
+LightIntensity
+
+
+
+ ██████╗ ██████╗  ███╗   ███╗ ██████╗  ██████╗  ███████╗ ███████╗██████╗
+██╔════╝██╔═══██╗ ████╗ ████║ ██╔══██╗██╔═══██╗ ██╔════╝ ██╔════╝██╔══██╗
+██║     ██║   ██║ ██╔████╔██║ ██████╔╝██║   ██║ ███████╗ █████╗  ██║  ██║
+██║     ██║   ██║ ██║╚██╔╝██║ ██╔═══╝ ██║   ██║ ╚════██║ ██╔══╝  ██║  ██║
+╚██████╗╚██████╔╝ ██║ ╚═╝ ██║ ██║     ╚██████╔╝ ███████║ ███████╗██████╔╝
+ ╚═════╝ ╚═════╝  ╚═╝     ╚═╝ ╚═╝      ╚═════╝  ╚══════╝ ╚══════╝╚═════╝
+
+Acceleration
+Conductivity
+Density / VolumetricMass
+Dobson
+ElectricCharge
+Energy
+Entropy
+Force
+Frequency
+MassFlow
+MolarMass
+Newton
+Planck
+Power
+Pressure
+Resistivity
+Speed
+SubstanceFlow
+Surface
+Voltage
+Volume
+VolumetricFlow
+"""
+
 # Fondamental dimensions:
 from dimensions.Time import Time
 from dimensions.Mass import Mass

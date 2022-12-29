@@ -3,6 +3,9 @@ from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 
 class Resistivity(AbstractQuantity):
+    """
+    https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity
+    """
 
     _DIMENSIONAL_ARRAY = DimensionalArray\
         (

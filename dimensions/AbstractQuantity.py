@@ -11,6 +11,39 @@ from dimensions.exceptions import IncompatibleUnitError
 
 
 class AbstractQuantity(float, metaclass=_MetaQuantity):
+    """
+    This class is the abstract class serving as model for all dimensions.
+    All the classes representing a dimension must inherit from AbstractQuantity.
+    It defines the addition, subtraction, multiplication and division through the
+    corresponding magic methods.
+
+
+
+    ███████╗ ██╗      ██████╗ ████████╗ ███████╗
+    ██╔════╝ ██║     ██╔═══██╗╚══██╔══╝ ██╔════╝
+    ███████╗ ██║     ██║   ██║   ██║    ███████╗
+    ╚════██║ ██║     ██║   ██║   ██║    ╚════██║
+    ███████║ ███████╗╚██████╔╝   ██║    ███████║
+    ╚══════╝ ╚══════╝ ╚═════╝    ╚═╝    ╚══════╝
+
+    _unit_map           list        List of UnitContext objects, containing descriptions of assigned units.
+    _factor_from_si     float       If @self is multiplied by this factor,
+                                    it allows to convert @self to international unit
+
+
+
+    ██████╗ ██████╗   ██████╗  ██████╗ ███████╗██████╗ ████████╗██╗ ███████╗███████╗
+    ██╔══██╗██╔══██╗ ██╔═══██╗ ██╔══██╗██╔════╝██╔══██╗╚══██╔══╝██║ ██╔════╝██╔════╝
+    ██████╔╝██████╔╝ ██║   ██║ ██████╔╝█████╗  ██████╔╝   ██║   ██║ █████╗  ███████╗
+    ██╔═══╝ ██╔══██╗ ██║   ██║ ██╔═══╝ ██╔══╝  ██╔══██╗   ██║   ██║ ██╔══╝  ╚════██║
+    ██║     ██║  ██║ ╚██████╔╝ ██║     ███████╗██║  ██║   ██║   ██║ ███████╗███████║
+    ╚═╝     ╚═╝  ╚═╝  ╚═════╝  ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚══════╝╚══════╝
+
+    symbol              -->     _symbol             str         Read Only
+    unit_full_name      -->     _                   str         Read Only
+    factor_from_si      -->     _factor_from_si     float       Read Only
+    is_si               -->     _                   bool        Read Only
+    """
 
     __slots__ = ('_unit_map', '_factor_from_si')
 
@@ -20,6 +53,132 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     _UNITS = dict()
 
 
+
+#   ██████╗ ██╗   ██╗ ██████╗ ██╗     ██╗  ██████╗     ███╗   ███╗ ███████╗████████╗██╗  ██╗  ██████╗  ██████╗  ███████╗
+#   ██╔══██╗██║   ██║ ██╔══██╗██║     ██║ ██╔════╝     ████╗ ████║ ██╔════╝╚══██╔══╝██║  ██║ ██╔═══██╗ ██╔══██╗ ██╔════╝
+#   ██████╔╝██║   ██║ ██████╔╝██║     ██║ ██║          ██╔████╔██║ █████╗     ██║   ███████║ ██║   ██║ ██║  ██║ ███████╗
+#   ██╔═══╝ ██║   ██║ ██╔══██╗██║     ██║ ██║          ██║╚██╔╝██║ ██╔══╝     ██║   ██╔══██║ ██║   ██║ ██║  ██║ ╚════██║
+#   ██║     ╚██████╔╝ ██████╔╝███████╗██║ ╚██████╗     ██║ ╚═╝ ██║ ███████╗   ██║   ██║  ██║ ╚██████╔╝ ██████╔╝ ███████║
+#   ╚═╝      ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═════╝     ╚═╝     ╚═╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝  ╚═════╝  ╚═════╝  ╚══════╝
+
+    def has_same_dimensions_than(self, value, strict: bool = False) -> bool:
+        """
+        @param value    AbstractQuantity
+        @param strict   bool = False
+
+        @return         bool
+
+        This method takes as input any quantity, and checks if this quantity has same
+        dimension as @self. If strict is set to True, also checks if @value also has
+        the same unit than self.
+
+        Example:
+        >>> from dimensions import Length, Mass
+        >>> a = Length(1, 'km')
+        >>> b = Length(1, 'mil')
+        >>> c = Mass(1, 'g')
+        >>> a.has_same_dimensions_than(b)
+        True
+        >>> a.has_same_dimensions_than(b, True)
+        False
+        >>> a.has_same_dimensions_than(c)
+        False
+        """
+        if type(self) is not type(value):
+            return False
+        if not strict:
+            return True
+
+
+
+    def align_to(self, other):
+        if type(self) != type(other):
+            raise IncompatibleUnitError(f"{str(self)} and {str(other)} have incompatible unit. Impossible to convert.")
+        conversion_factor = self._factor_from_si / other.factor_from_si
+        new_unit = other.symbol
+        return self.__class__(float(self) * conversion_factor, new_unit)
+
+
+
+    def convert(self, new_unit: str):
+        """
+        @param new_unit     str                     The symbol of a unit to perform the conversion
+
+        @return             AbstractQuantity        The converted quantity
+
+        @raise              IncompatibleUnitError   If trying to convert a dimension to a unit which does not
+                                                    belong to that dimension.
+
+        Example:
+
+        >>> from dimensions import Length
+        >>> a = Length(1, 'km')
+        >>> b = a.convert('mil')
+        >>> b
+        0.621371192237334 mil
+        >>> a.convert('sec')
+        Traceback (most recent call last):
+          File "<input>", line 1, in <module>
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 108, in convert
+            except (LookupError, ValueError):
+        dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: sec is incompatible with km
+        """
+        try:
+            new_quantity = self.__class__(float(self), new_unit)
+        except (LookupError, ValueError):
+            raise IncompatibleUnitError(f"{new_unit} is incompatible with {self.symbol}") from None
+        conversion_factor = self._factor_from_si / new_quantity.factor_from_si
+        return new_quantity * conversion_factor
+
+
+
+    def decompose(self) -> tuple:
+        decomposed = [float(self)]
+        for context in self._unit_map:
+            exponent = context.exponent
+            elementary_unit = context.elementary_unit
+            prefix = context.prefix
+            corresponding_class = _MetaQuantity.which_dimension_has(elementary_unit)
+            if exponent != 1:
+                powered_dimension_class = pow(corresponding_class, exponent)
+                exponent_str = exponent if exponent not in (0, 1) else ''
+                decomposed.append(powered_dimension_class(1.0, f"{prefix.symbol}{elementary_unit.symbol}{exponent_str}"))
+            else:
+                exponent_str = exponent if exponent not in (0, 1) else ''
+                decomposed.append(corresponding_class(1.0, f"{prefix.symbol}{elementary_unit.symbol}{exponent_str}"))
+        return tuple(decomposed)
+
+
+
+    @classmethod
+    def prod(cls, sequence_of_quantities: list | tuple, initial=None):
+        if type(sequence_of_quantities[0]) in (float, int):
+            sequence_of_quantities = reversed(sequence_of_quantities)
+        it = iter(sequence_of_quantities)
+        if initial is None:
+            try:
+                value = next(it)
+            except StopIteration:
+                raise TypeError("reduce() of empty iterable with no initial value") from None
+        else:
+            value = initial
+        for element in it:
+            value = cls.__mul__(value, element)
+        return value
+
+
+
+
+#   ███╗   ███╗  █████╗   ██████╗ ██╗  ██████╗     ███╗   ███╗ ███████╗████████╗██╗  ██╗  ██████╗  ██████╗  ███████╗
+#   ████╗ ████║ ██╔══██╗ ██╔════╝ ██║ ██╔════╝     ████╗ ████║ ██╔════╝╚══██╔══╝██║  ██║ ██╔═══██╗ ██╔══██╗ ██╔════╝
+#   ██╔████╔██║ ███████║ ██║  ███╗██║ ██║          ██╔████╔██║ █████╗     ██║   ███████║ ██║   ██║ ██║  ██║ ███████╗
+#   ██║╚██╔╝██║ ██╔══██║ ██║   ██║██║ ██║          ██║╚██╔╝██║ ██╔══╝     ██║   ██╔══██║ ██║   ██║ ██║  ██║ ╚════██║
+#   ██║ ╚═╝ ██║ ██║  ██║ ╚██████╔╝██║ ╚██████╗     ██║ ╚═╝ ██║ ███████╗   ██║   ██║  ██║ ╚██████╔╝ ██████╔╝ ███████║
+#   ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═════╝     ╚═╝     ╚═╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝  ╚═════╝  ╚═════╝  ╚══════╝
+
+    #-----------------------#
+    #    Object handling    #
+    #-----------------------#
 
     def __new__(cls, value: int | float | str, unit: str = ''):
         try:
@@ -52,67 +211,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
-    def has_same_dimensions_than(self, value, strict: bool = False) -> bool:
-        if type(self) is not type(value):
-            return False
-        if not strict:
-            return True
-
-
-
-    def align_to(self, other):
-        if type(self) != type(other):
-            raise IncompatibleUnitError(f"{str(self)} and {str(other)} have incompatible unit. Impossible to convert.")
-        conversion_factor = self._factor_from_si / other.factor_from_si
-        new_unit = other.symbol
-        return self.__class__(float(self) * conversion_factor, new_unit)
-
-
-
-    def convert(self, new_unit: str):
-        try:
-            new_quantity = self.__class__(float(self), new_unit)
-        except (LookupError, ValueError):
-            raise IncompatibleUnitError(f"{new_unit} is incompatible with {self.symbol}") from None
-        conversion_factor = self._factor_from_si / new_quantity.factor_from_si
-        return new_quantity * conversion_factor
-
-
-
-    def decompose(self) -> tuple:
-        decomposed = [float(self)]
-        for context in self._unit_map:
-            exponent = context.exponent
-            elementary_unit = context.elementary_unit
-            prefix = context.prefix
-            corresponding_class = _MetaQuantity.which_dimension_has(elementary_unit)
-            if exponent != 1:
-                powered_dimension_class = pow(corresponding_class, exponent)
-                exponent_str = exponent if exponent not in (0, 1) else ''
-                decomposed.append(powered_dimension_class(1.0, f"{prefix.symbol}{elementary_unit.symbol}{exponent_str}"))
-            else:
-                exponent_str = exponent if exponent not in (0, 1) else ''
-                decomposed.append(corresponding_class(1.0, f"{prefix.symbol}{elementary_unit.symbol}{exponent_str}"))
-        return tuple(decomposed)
-
-
-
-
-    def __get_factor_from_si(self, contexts: list) -> float:
-        metaclass = self.__class__.__class__
-        factors = list()
-        for context in contexts:
-            exponent = context.exponent
-            elementary_unit = context.elementary_unit
-            prefix = context.prefix
-            sub_dimension_class = metaclass.which_dimension_has(elementary_unit)
-            base_factor = sub_dimension_class.UNITS[elementary_unit]
-            # base_factor = elementary_unit.factor_from_si_unit
-            factor = power(base_factor * power(10, prefix.ten_power), exponent)
-            factors.append(factor)
-        return prod(factors)
-
-
+    # -----------------------#
+    #         Maths          #
+    # -----------------------#
 
     def __add__(self, other):
         if not isinstance(other, self.__class__):
@@ -176,41 +277,33 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
-    @classmethod
-    def prod(cls, sequence_of_quantities: list | tuple, initial=None):
-        if type(sequence_of_quantities[0]) in (float, int):
-            sequence_of_quantities = reversed(sequence_of_quantities)
-        it = iter(sequence_of_quantities)
-        if initial is None:
-            try:
-                value = next(it)
-            except StopIteration:
-                raise TypeError("reduce() of empty iterable with no initial value") from None
-        else:
-            value = initial
-        for element in it:
-            value = cls.__mul__(value, element)
-        return value
-
-
-
     __imul__ = __mul__
 
 
+
+    # -----------------------#
+    #        Strings         #
+    # -----------------------#
 
     def __str__(self) -> str:
         return f"{float(self)} {self.__get_unit_label(self._unit_map, False)}"
 
 
 
-    def __run_diagnostic(self, value: int | float | str, unit: str, error_object: Exception) -> None:
-        if isinstance(value, (int, float)) and not unit:
-            raise MissingUnitException(f"No unit was provided for value {value}") from None
-        if isinstance(error_object, LookupError):
-            raise BadUnitException(f"{unit} is an invalid unit for a {self.__class__.__name__}") from None
-        raise BadUnitException from None
+    if __debug__:
+
+        def __repr__(self) -> str:
+            return self.__str__()
 
 
+
+
+#   ██████╗ ██████╗  ██████╗ ████████╗        ███╗   ███╗ ███████╗████████╗██╗  ██╗  ██████╗  ██████╗  ███████╗
+#   ██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝        ████╗ ████║ ██╔════╝╚══██╔══╝██║  ██║ ██╔═══██╗ ██╔══██╗ ██╔════╝
+#   ██████╔╝██████╔╝██║   ██║   ██║           ██╔████╔██║ █████╗     ██║   ███████║ ██║   ██║ ██║  ██║ ███████╗
+#   ██╔═══╝ ██╔══██╗██║   ██║   ██║           ██║╚██╔╝██║ ██╔══╝     ██║   ██╔══██║ ██║   ██║ ██║  ██║ ╚════██║
+#   ██║     ██║  ██║╚██████╔╝   ██║   ██╗     ██║ ╚═╝ ██║ ███████╗   ██║   ██║  ██║ ╚██████╔╝ ██████╔╝ ███████║
+#   ╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝     ╚═╝     ╚═╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝  ╚═════╝  ╚═════╝  ╚══════╝
 
     @classmethod
     def _strip_unit_chars(cls, quantity_as_str_with_unit: str) -> str:
@@ -237,6 +330,39 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+
+#   ██████╗ ██████╗ ██╗██╗   ██╗      ███╗   ███╗███████╗████████╗██╗  ██╗ ██████╗ ██████╗ ███████╗
+#   ██╔══██╗██╔══██╗██║██║   ██║      ████╗ ████║██╔════╝╚══██╔══╝██║  ██║██╔═══██╗██╔══██╗██╔════╝
+#   ██████╔╝██████╔╝██║██║   ██║      ██╔████╔██║█████╗     ██║   ███████║██║   ██║██║  ██║███████╗
+#   ██╔═══╝ ██╔══██╗██║╚██╗ ██╔╝      ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║   ██║██║  ██║╚════██║
+#   ██║     ██║  ██║██║ ╚████╔╝██╗    ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
+#   ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═╝    ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
+
+    def __get_factor_from_si(self, contexts: list) -> float:
+        metaclass = self.__class__.__class__
+        factors = list()
+        for context in contexts:
+            exponent = context.exponent
+            elementary_unit = context.elementary_unit
+            prefix = context.prefix
+            sub_dimension_class = metaclass.which_dimension_has(elementary_unit)
+            base_factor = sub_dimension_class.UNITS[elementary_unit]
+            # base_factor = elementary_unit.factor_from_si_unit
+            factor = power(base_factor * power(10, prefix.ten_power), exponent)
+            factors.append(factor)
+        return prod(factors)
+
+
+
+    def __run_diagnostic(self, value: int | float | str, unit: str, error_object: Exception) -> None:
+        if isinstance(value, (int, float)) and not unit:
+            raise MissingUnitException(f"No unit was provided for value {value}") from None
+        if isinstance(error_object, LookupError):
+            raise BadUnitException(f"{unit} is an invalid unit for a {self.__class__.__name__}") from None
+        raise BadUnitException from None
+
+
+
     def __select_correct_candidates(self, candidates: list) -> tuple:
         candidates = [c.items() for c in candidates]
         combinaisons = product(*candidates)
@@ -259,32 +385,6 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if bool((updated_dimensional_array == self._DIMENSIONAL_ARRAY.as_array).prod()) is True:
             return
         raise ValueError()
-
-
-
-    # def __determine_unit_set_to_use(self, elementary_unit_as_str: str, unit_exponent: int) -> dict:
-    #     for unit_map in self._TEST:
-    #         for unit, exponent in unit_map.items():
-    #             if elementary_unit_as_str == unit.symbol and unit_exponent == exponent:
-    #                 return unit_map
-    #     raise BadUnitException
-
-
-
-    # @staticmethod
-    # def __get_unit_from_hint(hint: str, exponent: int, map_to_search_in: dict) -> (Unit, int):
-    #     for unit, unit_exponent in map_to_search_in.items():
-    #         if exponent == unit_exponent and (hint == unit.symbol or hint == unit.long_name):
-    #             return unit
-    #     raise BadUnitException  # (f"{hint}{exponent} is not a valid unit for dimension {self.__class__.__name__}.")
-
-
-
-    # def __get_unit_from_hint2(self, hint: str, exponent: int) -> (Unit, int):
-    #     for unit, unit_exponent in self._UNITS.items():
-    #         if exponent == unit_exponent and (hint == unit.symbol or hint == unit.long_name):
-    #             return unit
-    #     raise BadUnitException(f"{hint}{exponent} is not a valid unit for dimension {self.__class__.__name__}.")
 
 
 
@@ -316,29 +416,64 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         return ' '.join(name_items)
 
 
-    if __debug__:
-
-        def __repr__(self) -> str:
-            return self.__str__()
 
 
+#   ██████╗ ██████╗   ██████╗  ██████╗ ███████╗██████╗ ████████╗██╗ ███████╗███████╗
+#   ██╔══██╗██╔══██╗ ██╔═══██╗ ██╔══██╗██╔════╝██╔══██╗╚══██╔══╝██║ ██╔════╝██╔════╝
+#   ██████╔╝██████╔╝ ██║   ██║ ██████╔╝█████╗  ██████╔╝   ██║   ██║ █████╗  ███████╗
+#   ██╔═══╝ ██╔══██╗ ██║   ██║ ██╔═══╝ ██╔══╝  ██╔══██╗   ██║   ██║ ██╔══╝  ╚════██║
+#   ██║     ██║  ██║ ╚██████╔╝ ██║     ███████╗██║  ██║   ██║   ██║ ███████╗███████║
+#   ╚═╝     ╚═╝  ╚═╝  ╚═════╝  ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚══════╝╚══════╝
 
     def __get_symbol(self) -> str:
+        """
+        symbol      -->     _symbol     str     Read Only
+
+        The unit symbol attached to the quantity. For instance, if self = Speed(1, 'm sec-1'),
+        symbol = 'm sec-1'
+        """
         return self.__get_unit_label(self._unit_map, False)
 
     symbol = property(fget=__get_symbol, doc=f"{__get_symbol.__doc__}")
+# ----------------------------------------------------------------------------------------------------------------------
 
     def __get_full_name(self) -> str:
+        """
+        unit_full_name      -->     _     str     Read Only
+
+        The full name of the unit. For instance "Meter", "Pascal", "Electron-Volt", etc...
+        """
         return self.__get_unit_label(self._unit_map, True)
 
     unit_full_name = property(fget=__get_full_name, doc=f"{__get_full_name.__doc__}")
+# ----------------------------------------------------------------------------------------------------------------------
 
     def __get_factor_from_si_attribute(self) -> float:
+        """
+        factor_from_si      -->     _factor_from_si     float     Read Only
+
+        This is a view to @self._factor_from_si (factor from international system).
+        This factor relates @self to the corresponding value in the international system.
+        """
         return self._factor_from_si
 
     factor_from_si = property(fget=__get_factor_from_si_attribute, doc=f"{__get_factor_from_si_attribute.__doc__}")
+# ----------------------------------------------------------------------------------------------------------------------
 
     def __get_is_si(self) -> bool:
+        """
+        is_si      -->     _     bool     Read Only
+
+        True if this quantity is expressed with unit of the international system.
+        False otherwise.
+
+        For instance, 1 Pa (Pressure) will have this property set to True because
+        1 Pa = 1 Kg m-1 sec-2. All those units are SI.
+
+        But 1 mmHg (Pressure) will have this property set to False, because mercury
+        millimeter is not SI.
+        """
         return self._factor_from_si == 1.0
 
     is_si = property(fget=__get_is_si, doc=f"{__get_is_si.__doc__}")
+# ----------------------------------------------------------------------------------------------------------------------
