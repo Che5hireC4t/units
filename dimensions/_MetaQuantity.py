@@ -2,6 +2,7 @@ class _MetaQuantity(type):
 
     __SPECIAL_CLASSES = \
         {
+            (0, 0, 0, 0, 0, 0, 0): '_NullDimension',
             (2, 0, 0, 0, 0, 0, 0): 'Surface',
             (3, 0, 0, 0, 0, 0, 0): 'Volume',
             (1, -1, 0, 0, 0, 0, 0): 'Speed',
@@ -10,7 +11,7 @@ class _MetaQuantity(type):
             (3, -1, 0, 0, 0, 0, 0): 'VolumetricFlow'
         }
 
-    __instances = {(0, 0, 0, 0, 0, 0, 0): float}
+    __instances = dict()  # {(0, 0, 0, 0, 0, 0, 0): float}
 
 
 

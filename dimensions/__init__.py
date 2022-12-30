@@ -90,3 +90,5 @@ from dimensions.Conductivity import Conductivity
 from dimensions.Planck import Planck
 from dimensions.Newton import Newton
 from dimensions.Force import Force
+
+from dimensions._NullDimension import _NullDimension
