@@ -216,17 +216,13 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     # -----------------------#
 
     def __add__(self, other):
-        if not isinstance(other, self.__class__):
-            raise IncompatibleUnitError(f"Impossible to add {self} and {other} because dimensions are different.")
-        converted_other = other.convert(self.symbol)
+        converted_other = self.__try_conversion(other)
         return self.__class__(float(self) + float(converted_other), self.symbol)
 
 
 
     def __sub__(self, other):
-        if not isinstance(other, self.__class__):
-            raise IncompatibleUnitError(f"Impossible to sub {self} and {other} because dimensions are different.")
-        converted_other = other.convert(self.symbol)
+        converted_other = self.__try_conversion(other)
         return self.__class__(float(self) - float(converted_other), self.symbol)
 
 
