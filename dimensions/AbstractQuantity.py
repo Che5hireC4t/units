@@ -211,6 +211,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def __hash__(self) -> int:
+        return hash(float(self) * hash(self.__class__))
+
+
+
     # -----------------------#
     #         Maths          #
     # -----------------------#
