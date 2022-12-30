@@ -95,6 +95,12 @@ class DimensionalArray(ndarray):
             return f"{self.__class__.__name__}({', '.join(self)})"
 
     def __get_array_view(self) -> ndarray:
-        return self.__as_array
+        try:
+            return self.__as_array
+        except AttributeError:
+            as_array = self.view(ndarray)
+            self.__as_array = as_array
+            return as_array
+
 
     as_array = property(fget=__get_array_view, doc=f"{__get_array_view.__doc__}")
