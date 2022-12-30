@@ -14,9 +14,15 @@ be a bit puzzled while interpreting the output results, and at worst [you may cr
 your boss this little 
 mistake cost $494.84 million](https://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure).
 
+# Dependencies
+
+- Numpy
+- (pytest, for running the unit tests)
+
 # Installation
 
 ```
+$ pip install --user --upgrade numpy pytest
 $ git clone https://github.com/Che5hireC4t/units
 $ python
 >>> import units
