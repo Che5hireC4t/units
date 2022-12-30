@@ -92,3 +92,4 @@ from dimensions.Newton import Newton
 from dimensions.Force import Force
 
 from dimensions._NullDimension import _NullDimension
+from dimensions.AbstractQuantity import AbstractQuantity
