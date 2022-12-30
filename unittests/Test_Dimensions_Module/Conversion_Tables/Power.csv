@@ -1,0 +1,4 @@
+,,yotta,zetta,exa,peta,tera,giga,mega,kilo,hecto,deca,,deci,centi,mili,micro,nano,pico,femto,atto,zepto,yocto
+,,Y,Z,E,P,T,G,M,k,h,da,,d,c,m,µ,n,p,f,a,z,y
+,,24,21,18,15,12,9,6,3,2,1,0,-1,-2,-3,-6,-9,-12,-15,-18,-21,-24
+watt,W,1E-27,1E-24,1E-21,1E-18,1E-15,1E-12,0.000000001,0.000001,0.00001,0.0001,0.001,0.01,0.1,1,1000,1000000,1000000000,1000000000000,1000000000000000,1E+018,1E+021
