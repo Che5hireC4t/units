@@ -282,6 +282,107 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     # -----------------------#
+    #       Comparison       #
+    # -----------------------#
+
+    def __eq__(self, other) -> bool:
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         Bool                    Is @self == @other
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        Magic method called automatically when using the operator "==".
+        For instance q1 == q2
+        """
+        converted_other = self.__try_conversion(other)
+        return float(self) == float(converted_other)
+
+
+
+    def __ne__(self, other) -> bool:
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         Bool                    Is @self != @other
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        Magic method called automatically when using the operator "!=".
+        For instance q1 != q2
+        """
+        converted_other = self.__try_conversion(other)
+        return float(self) != float(converted_other)
+
+
+
+    def __lt__(self, other) -> bool:
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         Bool                    Is @self < @other
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        Magic method called automatically when using the operator "<".
+        For instance q1 < q2
+        """
+        converted_other = self.__try_conversion(other)
+        return float(self) < float(converted_other)
+
+
+
+    def __le__(self, other) -> bool:
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         Bool                    Is @self <= @other
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        Magic method called automatically when using the operator "<=".
+        For instance q1 <= q2
+        """
+        converted_other = self.__try_conversion(other)
+        return float(self) <= float(converted_other)
+
+
+
+    def __gt__(self, other) -> bool:
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         Bool                    Is @self > @other
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        Magic method called automatically when using the operator ">".
+        For instance q1 > q2
+        """
+        converted_other = self.__try_conversion(other)
+        return float(self) > float(converted_other)
+
+
+
+    def __ge__(self, other) -> bool:
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         Bool                    Is @self >= @other
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        Magic method called automatically when using the operator ">=".
+        For instance q1 >= q2
+        """
+        converted_other = self.__try_conversion(other)
+        return float(self) >= float(converted_other)
+
+
+
+
+    # -----------------------#
     #        Strings         #
     # -----------------------#
 
@@ -401,6 +502,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         return None, None
 
 
+
     @staticmethod
     def __get_unit_label(contexts, full_label: bool = False) -> str:
         name_items = list()
@@ -414,6 +516,26 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             else:
                 name_items.append(f"{prefix.symbol}{elementary_unit.symbol}{exponent_str}")
         return ' '.join(name_items)
+
+
+
+    def __try_conversion(self, other):
+        """
+        @param other    AbstractQuantity        Another quantity
+
+        @return         AbstractQuantity        @other converted to the same unit as @self
+
+        @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
+
+        This method tries to perform the conversion in order to compare @self and @other.
+        It is called by mathematical and comparison magic method when the calling procedure
+        tries to add two quantities, or check if a quantity is greater than another.
+        """
+        if not isinstance(other, self.__class__):
+            error_message = f"Impossible to compare {self} ({self.__class__.__name__}) " \
+                            f"and {other} ({other.__class__.__name__}): dimensions are different."
+            raise IncompatibleUnitError(error_message)
+        return other.convert(self.symbol)
 
 
 
