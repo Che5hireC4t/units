@@ -2,6 +2,19 @@ from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 
 class Length(AbstractQuantity):
+    """
+    Supported units (From smallest to biggest):
+
+    Meter                   m           Length(1.0, "m")
+    Inch                    in          Length(1.0, "in")
+    Foot                    ft          Length(1.0, "ft")
+    Yard                    yd          Length(1.0, "yd")
+    Mile                    mil         Length(1.0, "mil")
+    Nautical Mile           nmi         Length(1.0, "nmi")
+    Astronomical Unit       au          Length(1.0, "au")
+    Light Year              ly          Length(1.0, "ly")
+    Parsec                  ps          Length(1.0, "ps")
+    """
 
     _DIMENSIONAL_ARRAY = DimensionalArray(length_exponent=1)
     _UNITS = \

@@ -3,6 +3,10 @@ from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 class Conductivity(AbstractQuantity):
     """
+    Supported units:
+
+    Siemens     σ       Conductivity        https://en.wikipedia.org/wiki/Siemens_(unit)
+
     https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity
     """
 

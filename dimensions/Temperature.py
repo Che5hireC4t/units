@@ -2,11 +2,18 @@ from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 
 class Temperature(AbstractQuantity):
+    """
+    Supported units (From smallest to biggest):
+
+    Kelvin     K       Temperature(1.0, "K")        https://en.wikipedia.org/wiki/Kelvin
+
+    https://en.wikipedia.org/wiki/Temperature
+    """
 
     _DIMENSIONAL_ARRAY = DimensionalArray(temperature_exponent=1)
     _UNITS = \
         {
-            Unit('K', '°Kelvin', 1.0): 1.0
+            Unit('K', '°Kelvin', 1.0): 1.0  # https://en.wikipedia.org/wiki/Kelvin
         }
     __FAHRENHEIT_KELVIN_FACTOR = 5.0/9.0
     __ABSOLUTE_ZERO = -273.15

@@ -152,6 +152,15 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
     @classmethod
     def prod(cls, sequence_of_quantities: list | tuple, initial=None):
+        """
+        @param sequence_of_quantities       Iterable                    A sequence of AbstractQuantity object
+        @param initial                      AbstractQuantity = None     The first element to init the product
+
+        @return                             AbstractQuantity            The result of the product of all elements
+                                                                        contained in @sequence_of_quantities
+
+        Note: the code of this method is a quasi copy-paste of the function collection.Reduce
+        """
         if type(sequence_of_quantities[0]) in (float, int):
             sequence_of_quantities = reversed(sequence_of_quantities)
         it = iter(sequence_of_quantities)
@@ -212,6 +221,14 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __hash__(self) -> int:
+        """
+        @return     int     An integer representation
+
+        Magic method automatically called when calling the builtin function "hash".
+        This method must be defined in order to make an object hashable.
+        The "hashable" behavior (and thus this magic method) is mandatory
+        to put such an object in a set or as keys in dictionaries.
+        """
         return hash(float(self) * hash(self.__class__))
 
 
@@ -221,18 +238,172 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     # -----------------------#
 
     def __add__(self, other):
+        """
+        @param other        AbstractQuantity        Another quantity
+
+        @return             AbstractQuantity        The result of the addition between @self and @other
+
+        @raise              IncompatibleUnitError   If @self and @other don't have the same dimensions.
+
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative. Read the end of this docstring.
+
+        Magic method automatically called when using the "+" (plus) operator.
+        This method is intended to implement the addition between two quantities.
+        Both quantities must belong to the same dimension. Otherwise, an IncompatibleUnitError is raised.
+        If both quantities belong to the same dimension, but have different units, this method automatically
+        converts @other to the same unit as @self, and returns a result with the same unit as @self.
+
+        Examples:
+
+        >>> from dimensions import Mass, Speed
+        >>> m1 = Mass(1.0, 'g')
+        >>> m2 = Mass(2.0, 'g')
+        >>> m1 + m2
+        3.0 g
+        >>> m3 = Mass(1.0, 'oz')
+        >>> m1 + m3
+        29.349523125 g
+        >>> sp = Speed(1.0, 'm sec-1')
+        >>> m1 + sp
+        Traceback (most recent call last):
+          File "<input>", line 1, in <module>
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 252, in __add__
+            >>> m3 = Mass(1.0, 'oz')
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 566, in __try_conversion
+        dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: Impossible to compare 1.0 g (Mass)
+        and 1.0 m sec-1 (Speed): dimensions are different.
+
+        Explanation about the non-commutative warning:
+        >>> m1 = Mass(1.0, 'g')
+        >>> m1 + 1
+        Traceback (most recent call last):
+          File "<input>", line 1, in <module>
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 282, in __add__
+            converted_other = self.__try_conversion(other)
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 687, in __try_conversion
+            raise IncompatibleUnitError(error_message)
+        dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: Impossible to compare 1.0 g (Mass)
+        and 1 (int): dimensions are different.
+
+        BUT:
+        >>> m1 = Mass(1.0, 'g')
+        >>> 1 + m1  # 1 is an integer, but can also be a float
+        2.0
+
+        This artifact is due to the fact that the called __add__ magic method is the one of the FIRST
+        member of the addition. In the first case, the first member is a Mass, thus the Mass
+        __add__ method is called. But in the second case, the first member is a simple int and the
+        int __add__ magic method is called, which casts the second member as a simple float.
+        """
         converted_other = self.__try_conversion(other)
         return self.__class__(float(self) + float(converted_other), self.symbol)
 
 
 
     def __sub__(self, other):
+        """
+        @param other        AbstractQuantity        Another quantity
+
+        @return             AbstractQuantity        The result of the subtraction from @other to @self
+
+        @raise              IncompatibleUnitError   If @self and @other don't have the same dimensions.
+
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __add__ magic method docstring for further words of explanation.
+
+        Magic method automatically called when using the "-" (minus) operator.
+        This method is intended to implement the subtraction between two quantities.
+        Both quantities must belong to the same dimension. Otherwise, an IncompatibleUnitError is raised.
+        If both quantities belong to the same dimension, but have different units, this method automatically
+        converts @other to the same unit as @self, and returns a result with the same unit as @self.
+
+        Examples:
+
+        >>> from dimensions import Mass, Speed
+        >>> m1 = Mass(1.0, 'g')
+        >>> m2 = Mass(2.0, 'g')
+        >>> m2 - m1
+        1.0 g
+        >>> m3 = Mass(1.0, 'oz')
+        >>> m3 - m1
+        0.9647260380504196 oz
+        >>> sp = Speed(1.0, 'm sec-1')
+        >>> m1 - sp
+        Traceback (most recent call last):
+          File "<input>", line 1, in <module>
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 252, in __sub__
+            converted_other = self.__try_conversion(other)
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 566, in __try_conversion
+            raise IncompatibleUnitError(error_message)
+        dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: Impossible to compare 1.0 g (Mass)
+        and 1.0 m sec-1 (Speed): dimensions are different.
+        """
         converted_other = self.__try_conversion(other)
         return self.__class__(float(self) - float(converted_other), self.symbol)
 
 
 
     def __mul__(self, other):
+        """
+        @param other        AbstractQuantity        Another quantity
+
+        @return             AbstractQuantity        The result of the multiplication between @self and @other
+
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This method may not be commutative. Read the end of this docstring.
+
+        Magic method automatically called when using the "*" (time) operator.
+        This method is intended to implement the multiplication between two quantities.
+        The multiplication between 2 quantities may give a result in a new dimension
+        (For instance, a surface multiplied by a speed give a volumetric flow).
+        This is automatically handled by this magic method:
+
+        >>> from dimensions import Surface, Speed
+        >>> area = Surface(2.0, 'm2')
+        >>> sp = Speed(3.0, 'm sec-1')
+        >>> flow = area * sp
+        >>> flow
+        6.0 m3 sec-1
+        >>> type(flow)
+        <class 'dimensions.VolumetricFlow.VolumetricFlow'>
+
+        If quantities have one or more dimension in common (for instance, surface and speed
+        have a length dimension in common), a conversion is internally applied to "align"
+        the same units of @other to @self ones.
+
+        Example:
+
+        >>> area = Surface(2.0, 'm2')
+        >>> sp = Speed(3.0, 'ft sec-1')
+        >>> area * sp
+        1.8288 m3 sec-1
+
+        If @self is multiplied by a pure float (without dimension), then a regular multiplication is
+        applied and the result will have the same dimension as @self:
+
+        >>> sp = Speed(3.0, 'ft sec-1')
+        >>> sp * 2.0
+        6.0 ft sec-1
+
+        Explanation about the non-commutative warning:
+
+        If you do the following:
+        >>> sp = Speed(3.0, 'ft sec-1')
+        >>> sp * 2.0
+        6.0 ft sec-1
+
+        BUT:
+        >>> sp = Speed(3.0, 'ft sec-1')
+        >>> 2.0 * sp  # This will not give a Speed, but a simple float.
+        6.0
+
+        This artifact is due to the fact that the called __mul__ magic method is the one of the FIRST
+        member of the multiplication. In the first case, the first member is a Speed, thus the Speed
+        __mul__ method is called. But in the second case, the first member is a simple float and the
+        float __mul__ method is called, which casts the second member as a simple float.
+        """
         if type(other) in (float, int):
             return self.__class__(float(self) * other, self.symbol)
         other_class = other.__class__
@@ -262,11 +433,68 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __truediv__(self, other):
+        """
+        @param other        AbstractQuantity        Another quantity
+
+        @return             AbstractQuantity        The result of the division between @self and @other
+
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This method may not be commutative.
+        Read __mul__ and __add__ magic methods docstrings for further words of explanation.
+
+        Magic method automatically called when using the "/" (divided) operator.
+        This method is intended to implement the division between two quantities.
+        The division between 2 quantities may give a result in a new dimension
+        (For instance, a length divided by a time give a speed).
+        This is automatically handled by this magic method:
+
+        >>> from dimensions import Length, Time
+        >>> l = Length(6.0, 'm')
+        >>> t = Time(3.0, 'sec')
+        >>> sp = l / t
+        >>> sp
+        2.0 m sec-1
+        >>> type(sp)
+        <class 'dimensions.Speed.Speed'>
+
+        The division of two quantities having the same dimension gives a simple float:
+        >>> L = Length(6.0, 'm')
+        >>> l = Length(3.0, 'm')
+        >>> x = L / l
+        >>> x
+        2.0
+        >>> type(x)
+        <class 'float'>
+
+        ...Even if both have not the same units. In that case, the second member is internally
+        converted to have the same units as the first member before doing the division:
+        >>> L = Length(19.685, 'ft')  # ~ 6m
+        >>> l = Length(3.0, 'm')      # This will be converted internally to feet
+        >>> L / l
+        1.999996
+        """
         return self.__mul__(~other)
 
 
 
     def __invert__(self):
+        """
+        @return             AbstractQuantity        The result of 1 / @self
+
+        This magic method is automatically called when using the "~" (reverse) operator.
+        It computes the reverse of the quantity (1 / quantity). The result will be an
+        instance of the reverse dimension.
+
+        Example:
+
+        >>> from dimensions import Time
+        >>> t = Time(0.5, 'sec')
+        >>> f = ~t
+        >>> f
+        2.0 sec-1
+        >>> type(f)
+        <class 'dimensions.Frequency.Frequency'>
+        """
         inverted_class = ~self.__class__
         new_unit_context = \
             [
@@ -294,8 +522,34 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
 
-        Magic method called automatically when using the operator "==".
-        For instance q1 == q2
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __add__ and __mul__ magic methods docstrings for further words of explanation.
+
+        Magic method called automatically when using the "==" (equal) operator.
+        This method is intended to implement the comparison between two quantities.
+        Both quantities must belong to the same dimension. Otherwise, an IncompatibleUnitError is raised.
+        If both quantities belong to the same dimension, but have different units, this method automatically
+        converts @other to the same unit as @self before doing the comparison.
+
+        Examples:
+
+        >>> from dimensions import Mass, Speed
+        >>> m1 = Mass(1.0, 'g')
+        >>> m2 = m1.convert('oz')
+        0.035273961949580414 oz
+        >>> m1 == m2
+        True
+        >>> sp = Speed(1.0, 'm sec-1')
+        >>> m1 == sp
+        Traceback (most recent call last):
+          File "<input>", line 1, in <module>
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 252, in __eq__
+            converted_other = self.__try_conversion(other)
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 566, in __try_conversion
+            raise IncompatibleUnitError(error_message)
+        dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: Impossible to compare 1.0 g (Mass)
+        and 1.0 m sec-1 (Speed): dimensions are different.
         """
         converted_other = self.__try_conversion(other)
         return float(self) == float(converted_other)
@@ -310,8 +564,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
 
-        Magic method called automatically when using the operator "!=".
-        For instance q1 != q2
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __eq__, __add__ and __mul__ magic methods docstrings for further words of explanation.
+
+        Magic method called automatically when using "!=" (different) operator. For instance q1 != q2.
+        Read docstring of __eq__ magic method as this method is very similar.
         """
         converted_other = self.__try_conversion(other)
         return float(self) != float(converted_other)
@@ -326,8 +584,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
 
-        Magic method called automatically when using the operator "<".
-        For instance q1 < q2
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __eq__, __add__ and __mul__ magic methods docstrings for further words of explanation.
+
+        Magic method called automatically when using "<" (lower than) operator. For instance q1 < q2.
+        Read docstring of __eq__ magic method as this method is very similar.
         """
         converted_other = self.__try_conversion(other)
         return float(self) < float(converted_other)
@@ -342,8 +604,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
 
-        Magic method called automatically when using the operator "<=".
-        For instance q1 <= q2
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __eq__, __add__ and __mul__ magic methods docstrings for further words of explanation.
+
+        Magic method called automatically when using "<=" (lower or equal) operator. For instance q1 <= q2.
+        Read docstring of __eq__ magic method as this method is very similar.
         """
         converted_other = self.__try_conversion(other)
         return float(self) <= float(converted_other)
@@ -358,8 +624,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
 
-        Magic method called automatically when using the operator ">".
-        For instance q1 > q2
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __eq__, __add__ and __mul__ magic methods docstrings for further words of explanation.
+
+        Magic method called automatically when using ">" (greater than) operator. For instance q1 > q2.
+        Read docstring of __eq__ magic method as this method is very similar.
         """
         converted_other = self.__try_conversion(other)
         return float(self) > float(converted_other)
@@ -374,8 +644,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         @raise          IncompatibleUnitError   if @other is not of the same dimensions as @self.
 
-        Magic method called automatically when using the operator ">=".
-        For instance q1 >= q2
+        !!! BIG SCARY FAT WARNING OF DOOM !!!
+        This magic method may not be commutative.
+        Read __eq__, __add__ and __mul__ magic methods docstrings for further words of explanation.
+
+        Magic method called automatically when using ">=" (greater or equal) operator. For instance q1 >= q2.
+        Read docstring of __eq__ magic method as this method is very similar.
         """
         converted_other = self.__try_conversion(other)
         return float(self) >= float(converted_other)
@@ -395,6 +669,19 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     if __debug__:
 
         def __repr__(self) -> str:
+            """
+            @return         str         A string representation of the object.
+
+            !!! NOT AVAILABLE IF DEBUG FLAG IS SET TO TRUE !!!
+
+            This magic method is automatically called by the builtin function "repr()",
+            or by calling an instance in a python interpreter:
+
+            >>> from dimensions import Length
+            >>> x = Length(1, 'm')
+            >>> x  # This line calls __repr__
+            1.0 m
+            """
             return self.__str__()
 
 

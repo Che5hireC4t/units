@@ -3,6 +3,10 @@ from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 class ElectricCharge(AbstractQuantity):
     """
+    Supported units:
+
+    Coulomb     C       ElectricCharge(1.0, "C")        https://en.wikipedia.org/wiki/Coulomb
+
     https://en.wikipedia.org/wiki/Electric_charge
     """
 
