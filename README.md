@@ -102,3 +102,36 @@ Many physical constants have been redefined. They are sorted in dedicated module
 >>> SULFUR_DIOXIDE
 64.064 g mol-1
 ```
+
+# Limitations
+
+Some unittests have not been fixed yet. To run the unittests, run
+```
+$ cd units
+$ pytest
+```
+
+Quantities objects are ***much*** slower than regular float, as highlighted by the following performance test:
+```
+>>> from timeit import timeit
+>>> 
+>>> setup = \
+... """
+... from dimensions import Surface, Dobson
+... from dimensions import Length, Time
+... a = 2.0
+... b = 3.0
+... l = Length(a, 'm')
+... t = Time(b, 'sec')
+... """
+>>> 
+>>> timeit(stmt='res = a / b', setup=setup, number=10000)
+0.000195320999409887
+>>> timeit(stmt='res = l / t', setup=setup, number=10000)
+4.316908988999785
+```
+
+This is a problem I am currently working on. In the meantime, if you have a 10000 * 10000 floats matrix, don't fill it
+with quantities or your program will never end. Instead, attach *one* quantity to that matrix, serving as unit
+reference. For doing a conversion, calculate a conversion factor from that unit as a regular float and multiply all your
+matrix item by that conversion factor.
