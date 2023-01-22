@@ -8,7 +8,6 @@ class _NullDimension(AbstractQuantity):
     """
 
     _DIMENSIONAL_ARRAY = DimensionalArray()
-    _UNITS = dict()
 
 
     def __new__(cls, value: int | float | str, unit=None):
