@@ -416,15 +416,22 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             for other_base_quantity in decomposed_other[1:]:
                 s = self_base_quantity._unit_map[0]
                 o = other_base_quantity._unit_map[0]
-                if _MetaQuantity.which_dimension_has(s.elementary_unit) is _MetaQuantity.which_dimension_has(o.elementary_unit):
-                    new_elementary_context = UnitContext(o.exponent, s.elementary_unit, s.prefix)
+                self_elementary_unit = s.elementary_unit
+                other_elementary_unit = o.elementary_unit
+                if _MetaQuantity.which_dimension_has(self_elementary_unit) is _MetaQuantity.which_dimension_has(other_elementary_unit):
+                    new_elementary_context = UnitContext(o.exponent, self_elementary_unit, s.prefix)
                     converted_base_quantity = other_base_quantity.convert(new_elementary_context.symbol)
                     converted_decomposed_other.append(converted_base_quantity)
-                    final_contexts.append(UnitContext(o.exponent + s.exponent, s.elementary_unit, s.prefix))
+                    exponents_sum = o.exponent + s.exponent
+                    if exponents_sum == 0:
+                        continue
+                    final_contexts.append(UnitContext(exponents_sum, self_elementary_unit, s.prefix))
                 else:
                     converted_decomposed_other.append(other_base_quantity)
-                    final_contexts.append(UnitContext(o.exponent, o.elementary_unit, o.prefix))
-                    final_contexts.append(UnitContext(s.exponent, s.elementary_unit, s.prefix))
+                    if (other_base_quantity.__class__.DIMENSIONAL_ARRAY.as_array * result_class.DIMENSIONAL_ARRAY).sum() != 0:
+                        final_contexts.append(UnitContext(o.exponent, other_elementary_unit, o.prefix))
+                    if (self_base_quantity.__class__.DIMENSIONAL_ARRAY.as_array * result_class.DIMENSIONAL_ARRAY).sum() != 0:
+                        final_contexts.append(UnitContext(s.exponent, self_elementary_unit, s.prefix))
         converted_other = self.__class__.prod(converted_decomposed_other)
         final_symbol = self.__get_unit_label(sorted(final_contexts, reverse=True, key=lambda x: x.exponent))
         result = result_class(float(self) * float(converted_other), final_symbol)
