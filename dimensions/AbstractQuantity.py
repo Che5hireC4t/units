@@ -473,7 +473,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         >>> L / l
         1.999996
         """
-        return self.__mul__(~other)
+        if isinstance(other, AbstractQuantity):
+            return self.__mul__(~other)
+        return self.__mul__(1.0 / other)  # Case if @other is a pure float.
 
 
 
