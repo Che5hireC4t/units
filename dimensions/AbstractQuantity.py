@@ -1,6 +1,7 @@
 from itertools import product
 from re import compile, match
 from math import prod, pow as power
+from numpy.core import number
 
 from __syntax import Prefix, UnitContext, Unit
 from DimensionalArray import DimensionalArray
@@ -161,7 +162,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         Note: the code of this method is a quasi copy-paste of the function collection.Reduce
         """
-        if type(sequence_of_quantities[0]) in (float, int):
+        first_quantity = sequence_of_quantities[0]
+        if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
             sequence_of_quantities = reversed(sequence_of_quantities)
         it = iter(sequence_of_quantities)
         if initial is None:
@@ -404,7 +406,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         __mul__ method is called. But in the second case, the first member is a simple float and the
         float __mul__ method is called, which casts the second member as a simple float.
         """
-        if type(other) in (float, int):
+        if type(other) in (float, int) or isinstance(other, number):  # number => numpy.core.number
             return self.__class__(float(self) * other, self.symbol)
         other_class = other.__class__
         result_class = self.__class__ * other_class
