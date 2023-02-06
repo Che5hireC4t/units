@@ -92,6 +92,65 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    @classmethod
+    def all_have_same_unit(cls, quantities: tuple | list | set | frozenset) -> bool:
+        """
+        @param quantities       Iterable                A list / tuple / set / etc. containing quantities
+
+        @return                 bool                    Have all those quantities the same unit?
+
+        @raise                  IncompatibleUnitError   - If the input iterable contains quantities of different dims
+                                                        - If the common dimension of all those quantities is not cls
+
+        This method checks if a set of quantities belonging to a specific dimension
+        are all expressed in the same unit.
+
+        Examples:
+
+        >>> from dimensions import Length, Mass
+
+        >>> a = Length(4, 'km')
+        >>> b = Length(18, 'km')
+        >>> c = Length(9.52, 'km')
+
+        >>> Length.all_have_same_unit([a, b, c])
+        True
+
+        >>> d = Length(2.8, 'mil')
+        >>> Length.all_have_same_unit([a, b, c, d])
+        False
+
+        >>> e = Mass(3.7, 'mg')
+        >>> Length.all_have_same_unit([a, b, c, d, e])
+        Traceback (most recent call last):
+          File "<input>", line 1, in <module>
+          File "/home/dev/units/dimensions/AbstractQuantity.py", line 108, in convert
+            except (LookupError, ValueError):
+        dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: All the quantities passed in input must have
+        the dimension of a Length.
+        However, the following dimensions have been detected:
+        4 km -> Length
+        18 km -> Length
+        9.52 km -> Length
+        2.8 mil -> Length
+        3.7 mg -> Mass
+        """
+        dimensions = {type(quantity) for quantity in quantities}
+        if len(dimensions) != 1:
+            problematic_quantities = "\n".join([f"{q} -> {type(q)}" for q in quantities])
+            error_message = f"All the quantities passed in input must have the dimension of a {cls.__name__}.\n" \
+                            f"However, the following dimensions have been detected:\n{problematic_quantities}"
+            raise IncompatibleUnitError(error_message)
+        dimension = dimensions.pop()
+        if dimension is not cls:
+            error_message = f"The quantities must have the dimension of a {cls.__name__}. " \
+                            f"However, they have the dimension of a {dimension.__name__}."
+            raise IncompatibleUnitError(error_message)
+        symbols = {quantity.symbol for quantity in quantities}
+        return len(symbols) == 1
+
+
+
     def align_to(self, other):
         if type(self) != type(other):
             raise IncompatibleUnitError(f"{str(self)} and {str(other)} have incompatible unit. Impossible to convert.")
