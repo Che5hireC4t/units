@@ -847,6 +847,43 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def __get_corresponding_protected_attribute_of_other_quantity(self, self_attribute_value, other_quantity):
+        """
+        @param self_attribute_value     Any                 An attribute of @self. For instance self._unit_map
+        @param other_quantity           AbstractQuantity    Another quantity
+
+        @return                         Any                 The value stored in the attribute with
+                                                            the same name for @other_quantity
+
+        @raise                          TypeError           if @other_quantity is not an AbstractQuantity
+
+        This method strictly internal is intended to retrieve the protected or private attributes
+        of another quantity in a compliant way. Indeed, it is normally considered as a bad practice
+        to query directly a protected or private attribute. Some languages such as PhP or C++ even
+        purposely crash if the developer tries to do that. In Python, everything is public.
+        Hence, you can do it, but it does not mean you should.
+
+        But in that particular case, I want to access to a protected / private attribute of an instance
+        of this class, from another instance of this same class. Thus, we already know that attribute
+        exists, and we also have an idea of its value.
+
+        Moreover, we need those private attributes only for internal comparison purpose. They do not
+        need to be exposed to the outside word, and they should not because they are of no utility
+        outside this class.
+        """
+        error_message = f"other_quantity must be an AbstractQuantity object. " \
+                        f"However, type(other_quantity) = {type(other_quantity)}"
+        assert isinstance(other_quantity, AbstractQuantity), error_message
+        for attribute_name in AbstractQuantity.__slots__:
+            value = getattr(self, attribute_name)
+            if value == self_attribute_value:
+                # Warning. Potential bug if an attribute contains a float('NaN') because float('NaN') != float('NaN')
+                # (Yes, this is silly, but true. Try by yourself in a Python shell if you don't trust me).
+                return getattr(other_quantity, attribute_name)
+        raise TypeError(error_message)
+
+
+
     def _handle_particular_cases(self, unit_as_string: str) -> (str, str):
         dimensional_array = self._DIMENSIONAL_ARRAY
         if dimensional_array[dimensional_array.TIME_INDEX] != 0:
