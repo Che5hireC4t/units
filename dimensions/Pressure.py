@@ -2,8 +2,26 @@ from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 
 class Pressure(AbstractQuantity):
+    """
+    Supported units:
 
-    # https://fr.wikipedia.org/wiki/Unit%C3%A9_de_pression
+    Pascal                      Pa          Pressure(1.0, "Pa")
+    Bar                         bar         Pressure(1.0, "bar")
+    Normalized atmosphere       atm         Pressure(1.0, "atm")
+    Technical atmosphere        at          Pressure(1.0, "at")
+    Centimeter of water         cmwat       Pressure(1.0, "cmwat")
+    Inch of water               inwat       Pressure(1.0, "inwat")
+    Millimeter of mercury       mmHg        Pressure(1.0, "mmHg")
+    Inch of mercury             inHg        Pressure(1.0, "inHg")
+    Torr                        torr        Pressure(1.0, "torr")
+    Barye                       ba          Pressure(1.0, "ba")
+    Pieze                       pz          Pressure(1.0, "pz")
+    Psi                         psi         Pressure(1.0, "psi")
+
+    https://en.wikipedia.org/wiki/Pressure
+    https://fr.wikipedia.org/wiki/Unit%C3%A9_de_pression  (French)
+    """
+
     _DIMENSIONAL_ARRAY = DimensionalArray(mass_exponent=1, length_exponent=-1, time_exponent=-2)
     _UNITS = \
         {
