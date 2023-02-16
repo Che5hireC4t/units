@@ -160,6 +160,78 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def align_units(self, other):
+        """
+        @param other        AbstractQuantity        Another quantity
+
+        @return             AbstractQuantity        The same quantity as @self, but converted
+                                                    to have the same unit for common dimensions as other.
+
+        Example:
+
+        >>> from dimensions import MassFlow, MolarMass
+        >>> water_flow = MassFlow(15, 'kg sec-1')
+        >>> water_mm = MolarMass(18.015, 'g mol-1')
+
+        Let's suppose you want a substance amount flow (mol sec-1). Theoretically, you just have to
+        divide water_flow by water_mm. The problem is the mass unit (common dimension) is not the same.
+        You have to "align" the mass unit of one over the mass unit of the other. So you should either
+        convert water_flow in g sec-1 or water_mm into kg mol-1.
+
+        This method does that:
+
+        >>> converted_water_flow = water_flow.align_units(water_mm)
+        >>> converted_water_flow
+        15000 g sec-1
+
+        This method works regardless of the number of common dimensions. If there is no common dimension,
+        this method just returns @self.
+
+        Normally, you should not need that method as it is internally called by the magic methods
+        __mul__ and __div__. So in that specific example, you can just do water_mm_flow = water_flow / water_mm
+        and basta. But as a dev on other side projects, I met the need to use this feature from
+        outside the object, so it is not big deal to make it public.
+        """
+        this_class = self.__class__
+        other_class = other.__class__
+        if this_class is other_class:
+            return self.convert(other.symbol)
+        self_unit_map = self._unit_map.copy()
+        other_unit_map_dict = \
+            {
+                _MetaQuantity.which_dimension_has(context.elementary_unit): context
+                for context in self.__get_corresponding_protected_attribute_of_other_quantity(self_unit_map, other)
+            }
+        conversion_factor = 1.0
+        final_unit_map = list()
+        while self_unit_map:
+            context = self_unit_map.pop()
+            unit_dimension_class = _MetaQuantity.which_dimension_has(context.elementary_unit)
+            if unit_dimension_class not in other_unit_map_dict:
+                final_unit_map.append(context)
+                continue
+            already_mapped_elementary_unit = other_unit_map_dict[unit_dimension_class].elementary_unit
+            already_mapped_prefix = other_unit_map_dict[unit_dimension_class].prefix
+            analyzed_unit = context.elementary_unit
+            analyzed_prefix = context.prefix
+            new_unit = analyzed_unit
+            new_prefix = analyzed_prefix
+            # if bar         is not mmHg  ## Then we want to convert mmHg to bar
+            if analyzed_unit is not already_mapped_elementary_unit:
+                unit_conversion_map = unit_dimension_class.UNITS
+                conversion_factor *= unit_conversion_map[analyzed_unit] / unit_conversion_map[already_mapped_elementary_unit]
+                new_unit = already_mapped_elementary_unit
+            # if kilo          is not milli  ## Then we want to convert milli to kilo
+            if analyzed_prefix is not already_mapped_prefix:
+                conversion_factor *= pow(10, analyzed_prefix.ten_power - already_mapped_prefix.ten_power)
+                new_prefix = already_mapped_prefix
+            new_context = UnitContext(context.exponent, new_unit, new_prefix)
+            final_unit_map.append(new_context)
+        final_symbol = self.__get_unit_label(final_unit_map)
+        return self.__class__(float(self) * conversion_factor, final_symbol)
+
+
+
     def convert(self, new_unit: str):
         """
         @param new_unit     str                     The symbol of a unit to perform the conversion
