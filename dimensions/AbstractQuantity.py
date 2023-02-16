@@ -561,9 +561,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         other_specific_dimensions = dimensions_of_other - dimensions_of_self
         for dimension_class in common_dimensions:
             aligned_context = self_unit_map_dict[dimension_class]
+            exponent = aligned_context.exponent + other_unit_map_dict[dimension_class].exponent
+            if exponent == 0:
+                continue
             unit = aligned_context.elementary_unit  # We ensured by unit alignment it is the same unit...
             prefix = aligned_context.prefix         # ... and prefix.
-            exponent = aligned_context.exponent + other_unit_map_dict[dimension_class].exponent
             final_unit_map.append(UnitContext(exponent, unit, prefix))
         for dimension_class in self_specific_dimensions:
             final_unit_map.append(self_unit_map_dict[dimension_class])
