@@ -541,34 +541,36 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             return self.__class__(float(self) * other, self.symbol)
         other_class = other.__class__
         result_class = self.__class__ * other_class
-        decomposed_self = self.decompose()
-        decomposed_other = other.decompose()
-        converted_decomposed_other = [float(other)]
-        final_contexts = list()
-        for self_base_quantity in decomposed_self[1:]:
-            for other_base_quantity in decomposed_other[1:]:
-                s = self_base_quantity._unit_map[0]
-                o = other_base_quantity._unit_map[0]
-                self_elementary_unit = s.elementary_unit
-                other_elementary_unit = o.elementary_unit
-                if _MetaQuantity.which_dimension_has(self_elementary_unit) is _MetaQuantity.which_dimension_has(other_elementary_unit):
-                    new_elementary_context = UnitContext(o.exponent, self_elementary_unit, s.prefix)
-                    converted_base_quantity = other_base_quantity.convert(new_elementary_context.symbol)
-                    converted_decomposed_other.append(converted_base_quantity)
-                    exponents_sum = o.exponent + s.exponent
-                    if exponents_sum == 0:
-                        continue
-                    final_contexts.append(UnitContext(exponents_sum, self_elementary_unit, s.prefix))
-                else:
-                    converted_decomposed_other.append(other_base_quantity)
-                    if (other_base_quantity.__class__.DIMENSIONAL_ARRAY.as_array * result_class.DIMENSIONAL_ARRAY).sum() != 0:
-                        final_contexts.append(UnitContext(o.exponent, other_elementary_unit, o.prefix))
-                    if (self_base_quantity.__class__.DIMENSIONAL_ARRAY.as_array * result_class.DIMENSIONAL_ARRAY).sum() != 0:
-                        final_contexts.append(UnitContext(s.exponent, self_elementary_unit, s.prefix))
-        converted_other = self.__class__.prod(converted_decomposed_other)
-        final_symbol = self.__get_unit_label(sorted(final_contexts, reverse=True, key=lambda x: x.exponent))
-        result = result_class(float(self) * float(converted_other), final_symbol)
-        return result
+        self_unit_map = self._unit_map.copy()
+        self_aligned = self.align_units(other)
+        final_unit_map = list()
+        self_unit_map_dict = \
+            {
+                _MetaQuantity.which_dimension_has(ctx.elementary_unit): ctx
+                for ctx in self.__get_corresponding_protected_attribute_of_other_quantity(self_unit_map, self_aligned)
+            }
+        other_unit_map_dict = \
+            {
+                _MetaQuantity.which_dimension_has(context.elementary_unit): context
+                for context in self.__get_corresponding_protected_attribute_of_other_quantity(self_unit_map, other)
+            }
+        dimensions_of_self = set(self_unit_map_dict.keys())
+        dimensions_of_other = set(other_unit_map_dict.keys())
+        common_dimensions = dimensions_of_self & dimensions_of_other
+        self_specific_dimensions = dimensions_of_self - dimensions_of_other
+        other_specific_dimensions = dimensions_of_other - dimensions_of_self
+        for dimension_class in common_dimensions:
+            aligned_context = self_unit_map_dict[dimension_class]
+            unit = aligned_context.elementary_unit  # We ensured by unit alignment it is the same unit...
+            prefix = aligned_context.prefix         # ... and prefix.
+            exponent = aligned_context.exponent + other_unit_map_dict[dimension_class].exponent
+            final_unit_map.append(UnitContext(exponent, unit, prefix))
+        for dimension_class in self_specific_dimensions:
+            final_unit_map.append(self_unit_map_dict[dimension_class])
+        for dimension_class in other_specific_dimensions:
+            final_unit_map.append(other_unit_map_dict[dimension_class])
+        final_symbol = self.__get_unit_label(final_unit_map)
+        return result_class(float(self_aligned) * float(other), final_symbol)
 
 
 
