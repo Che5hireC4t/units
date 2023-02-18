@@ -128,7 +128,7 @@ Quantities objects are ***much*** slower than regular float, as highlighted by t
 >>> timeit(stmt='res = a / b', setup=setup, number=10000)
 0.000195320999409887
 >>> timeit(stmt='res = l / t', setup=setup, number=10000)
-4.316908988999785
+0.8214943899947684
 ```
 
 This is a problem I am currently working on. In the meantime, if you have a 10000 * 10000 floats matrix, don't fill it

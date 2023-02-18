@@ -53,6 +53,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     _DIMENSIONAL_ARRAY = DimensionalArray(127, 127, 127, 127, 127, 127, 127)
     _UNITS = dict()
 
+    __context_cache = dict()
+
 
 
 #   ██████╗ ██╗   ██╗ ██████╗ ██╗     ██╗  ██████╗     ███╗   ███╗ ███████╗████████╗██╗  ██╗  ██████╗  ██████╗  ███████╗
@@ -332,23 +334,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __init__(self, value: int | float | str, unit: str = None) -> None:
-        if isinstance(value, (int, float)) and not unit:
-            raise MissingUnitException(f"No unit was provided for value {value}")
-        raw_contexts = None
         try:
-            raw_contexts = self._parse_unit_string(unit)
-            self._unit_map = sorted(raw_contexts, reverse=True, key=lambda x: x.exponent)
-        except AttributeError:  # if unit is None
-            try:
-                unit_without_value = value.lstrip('-., 0123456789')
-                raw_contexts = self._parse_unit_string(unit_without_value)
-                self._unit_map = sorted(raw_contexts, reverse=True, key=lambda x: x.exponent)
-            except AttributeError as error:
-                self.__run_diagnostic(value, unit, error)
-        except BadUnitException:
-            msg = f"{unit} is not a valid unit for dimension {self.__class__.__name__}"
-            raise BadUnitException(msg) from None
-        self._factor_from_si = self.__get_factor_from_si(raw_contexts)
+            self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
+        except KeyError:
+            self.__init_from_scratch(value, unit)
         return
 
 
@@ -920,6 +909,29 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if bool((updated_dimensional_array == self._DIMENSIONAL_ARRAY.as_array).prod()) is True:
             return
         raise ValueError()
+
+
+
+    def __init_from_scratch(self, value: int | float | str, unit: str = None) -> None:
+        if isinstance(value, (int, float)) and not unit:
+            raise MissingUnitException(f"No unit was provided for value {value}")
+        raw_contexts = None
+        try:
+            raw_contexts = self._parse_unit_string(unit)
+            self._unit_map = sorted(raw_contexts, reverse=True, key=lambda x: x.exponent)
+        except AttributeError:  # if unit is None
+            try:
+                unit_without_value = value.lstrip('-., 0123456789')
+                raw_contexts = self._parse_unit_string(unit_without_value)
+                self._unit_map = sorted(raw_contexts, reverse=True, key=lambda x: x.exponent)
+            except AttributeError as error:
+                self.__run_diagnostic(value, unit, error)
+        except BadUnitException:
+            msg = f"{unit} is not a valid unit for dimension {self.__class__.__name__}"
+            raise BadUnitException(msg) from None
+        self._factor_from_si = self.__get_factor_from_si(raw_contexts)
+        self.__class__.__context_cache[(self.__class__, unit)] = (self._unit_map, self._factor_from_si)
+        return
 
 
 
