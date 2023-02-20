@@ -9,6 +9,7 @@ class Length(AbstractQuantity):
     Inch                    in          Length(1.0, "in")
     Foot                    ft          Length(1.0, "ft")
     Yard                    yd          Length(1.0, "yd")
+    Flight Level            FL          Length(1.0, "FL")       # https://en.wikipedia.org/wiki/Flight_level
     Mile                    mil         Length(1.0, "mil")
     Nautical Mile           nmi         Length(1.0, "nmi")
     Astronomical Unit       au          Length(1.0, "au")
@@ -23,6 +24,7 @@ class Length(AbstractQuantity):
             Unit('in', 'inch', 0.0254): 0.0254,
             Unit('ft', 'foot', 0.3048): 0.3048,
             Unit('yd', 'yard', 0.9144): 0.9144,
+            Unit('FL', 'flight level', 30.48): 30.48,  # 1 FL = 100 ft = 30.48 m
             Unit('mil', 'mile', 1609.344): 1609.344,
             Unit('nmi', 'nautical mile', 1852.0): 1852.0,
             Unit('au', 'astronomical unit', 149597870700.0): 149597870700.0,
