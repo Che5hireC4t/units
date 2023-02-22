@@ -59,37 +59,37 @@ VolumetricFlow
 """
 
 # Fondamental dimensions:
-from dimensions.Time import Time
-from dimensions.Mass import Mass
-from dimensions.Length import Length
-from dimensions.Temperature import Temperature
-from dimensions.SubstanceAmount import SubstanceAmount
-from dimensions.ElectricCurrent import ElectricCurrent
-from dimensions.LightIntensity import LightIntensity
+from .Time import Time
+from .Mass import Mass
+from .Length import Length
+from .Temperature import Temperature
+from .SubstanceAmount import SubstanceAmount
+from .ElectricCurrent import ElectricCurrent
+from .LightIntensity import LightIntensity
 
 # Composed dimensions
-from dimensions.Surface import Surface
-from dimensions.Volume import Volume
-from dimensions.Frequency import Frequency
-from dimensions.Speed import Speed
-from dimensions.Acceleration import Acceleration
-from dimensions.MolarMass import MolarMass
-from dimensions.Density import Density, VolumetricMass
-from dimensions.VolumetricFlow import VolumetricFlow
-from dimensions.MassFlow import MassFlow
-from dimensions.SubstanceFlow import SubstanceFlow
-from dimensions.Energy import Energy
-from dimensions.Entropy import Entropy
-from dimensions.Pressure import Pressure
-from dimensions.Dobson import Dobson
-from dimensions.ElectricCharge import ElectricCharge
-from dimensions.Power import Power
-from dimensions.Voltage import Voltage
-from dimensions.Resistivity import Resistivity
-from dimensions.Conductivity import Conductivity
-from dimensions.Planck import Planck
-from dimensions.Newton import Newton
-from dimensions.Force import Force
+from .Surface import Surface
+from .Volume import Volume
+from .Frequency import Frequency
+from .Speed import Speed
+from .Acceleration import Acceleration
+from .MolarMass import MolarMass
+from .Density import Density, VolumetricMass
+from .VolumetricFlow import VolumetricFlow
+from .MassFlow import MassFlow
+from .SubstanceFlow import SubstanceFlow
+from .Energy import Energy
+from .Entropy import Entropy
+from .Pressure import Pressure
+from .Dobson import Dobson
+from .ElectricCharge import ElectricCharge
+from .Power import Power
+from .Voltage import Voltage
+from .Resistivity import Resistivity
+from .Conductivity import Conductivity
+from .Planck import Planck
+from .Newton import Newton
+from .Force import Force
 
-from dimensions._NullDimension import _NullDimension
-from dimensions.AbstractQuantity import AbstractQuantity
+from ._NullDimension import _NullDimension
+from .AbstractQuantity import AbstractQuantity

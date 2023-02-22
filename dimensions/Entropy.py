@@ -1,4 +1,4 @@
-from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray
+from .AbstractQuantity import AbstractQuantity, DimensionalArray
 
 
 class Entropy(AbstractQuantity):

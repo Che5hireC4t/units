@@ -1,3 +1,3 @@
-from __syntax.Unit import Unit
-from __syntax.UnitContext import UnitContext
-from __syntax.Prefix import Prefix
+from .Unit import Unit
+from .UnitContext import UnitContext
+from .Prefix import Prefix

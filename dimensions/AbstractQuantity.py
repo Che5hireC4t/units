@@ -5,7 +5,7 @@ from numpy.core import number
 
 from __syntax import Prefix, UnitContext, Unit
 from DimensionalArray import DimensionalArray
-from dimensions._MetaQuantity import _MetaQuantity
+from ._MetaQuantity import _MetaQuantity
 from exceptions import MissingUnitException, BadUnitException
 from dimensions.exceptions import IncompatibleUnitError
 

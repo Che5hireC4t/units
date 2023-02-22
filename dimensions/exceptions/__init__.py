@@ -1,1 +1,1 @@
-from dimensions.exceptions.IncompatibleUnitError import IncompatibleUnitError
+from .IncompatibleUnitError import IncompatibleUnitError

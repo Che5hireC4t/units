@@ -1,3 +1,3 @@
-from exceptions.UnitException import UnitException
-from exceptions.BadUnitException import BadUnitException
-from exceptions.MissingUnitException import MissingUnitException
+from .UnitException import UnitException
+from .BadUnitException import BadUnitException
+from .MissingUnitException import MissingUnitException

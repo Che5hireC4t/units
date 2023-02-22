@@ -1,4 +1,4 @@
-from dimensions.AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
+from .AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
 
 class Power(AbstractQuantity):
