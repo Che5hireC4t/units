@@ -1,4 +1,4 @@
-from dimensions import MolarMass
+from ..dimensions import MolarMass
 
 PROTON = MolarMass(1.0072765, 'g mol-1')
 NEUTRON = MolarMass(1.0086649, 'g mol-1')

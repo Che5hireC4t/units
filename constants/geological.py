@@ -1,4 +1,4 @@
-from dimensions import Length, Acceleration, Pressure, Temperature
+from ..dimensions import Length, Acceleration, Pressure, Temperature
 
 # Source : https://wiki.gis.com/wiki/index.php/Flattening
 EARTH_RADIUS = Length(6371000, 'm')

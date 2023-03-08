@@ -7,7 +7,7 @@ from __syntax import Prefix, UnitContext, Unit
 from DimensionalArray import DimensionalArray
 from ._MetaQuantity import _MetaQuantity
 from exceptions import MissingUnitException, BadUnitException
-from dimensions.exceptions import IncompatibleUnitError
+from .exceptions import IncompatibleUnitError
 
 
 

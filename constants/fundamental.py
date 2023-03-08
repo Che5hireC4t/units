@@ -1,4 +1,4 @@
-from dimensions import Frequency, Speed, ElectricCharge, Entropy, SubstanceAmount, Planck, Newton
+from ..dimensions import Frequency, Speed, ElectricCharge, Entropy, SubstanceAmount, Planck, Newton
 
 CESIUM_133_HYPERFINE_TRANSITION_FREQUENCY = Frequency(9192631770, 'Hz')
 CELERITY = Speed(299792458, 'm sec-1')
