@@ -292,10 +292,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         @return                             AbstractQuantity            The result of the sum of all elements
                                                                         contained in @sequence_of_quantities
         """
-        copy_of_sequence = [item for item in sequence_of_quantities]
-        first_quantity = copy_of_sequence[0]
-        if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
-            copy_of_sequence = reversed(copy_of_sequence)
+        copy_of_sequence = cls.__prepare_sequence_for_operation(sequence_of_quantities)
         result = copy_of_sequence.pop()
         while copy_of_sequence:
             result += copy_of_sequence.pop()
@@ -311,10 +308,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         @return                             AbstractQuantity            The result of the product of all elements
                                                                         contained in @sequence_of_quantities
         """
-        copy_of_sequence = [item for item in sequence_of_quantities]
-        first_quantity = copy_of_sequence[0]
-        if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
-            copy_of_sequence = reversed(copy_of_sequence)
+        copy_of_sequence = cls.__prepare_sequence_for_operation(sequence_of_quantities)
         result = copy_of_sequence.pop()
         while copy_of_sequence:
             result *= copy_of_sequence.pop()
@@ -894,6 +888,16 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if isinstance(error_object, LookupError):
             raise BadUnitException(f"{unit} is an invalid unit for a {self.__class__.__name__}") from None
         raise BadUnitException from None
+
+
+
+    @staticmethod
+    def __prepare_sequence_for_operation(sequence_of_quantities: list | tuple | set | frozenset) -> list:
+        copy_of_sequence = [item for item in sequence_of_quantities]
+        first_quantity = copy_of_sequence[0]
+        if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
+            copy_of_sequence = reversed(copy_of_sequence)
+        return copy_of_sequence
 
 
 
