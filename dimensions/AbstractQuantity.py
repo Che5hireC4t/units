@@ -285,30 +285,21 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     @classmethod
-    def prod(cls, sequence_of_quantities: list | tuple, initial=None):
+    def prod(cls, sequence_of_quantities: list | tuple | set | frozenset):
         """
         @param sequence_of_quantities       Iterable                    A sequence of AbstractQuantity object
-        @param initial                      AbstractQuantity = None     The first element to init the product
 
         @return                             AbstractQuantity            The result of the product of all elements
                                                                         contained in @sequence_of_quantities
-
-        Note: the code of this method is a quasi copy-paste of the function collection.Reduce
         """
-        first_quantity = sequence_of_quantities[0]
+        copy_of_sequence = [item for item in sequence_of_quantities]
+        first_quantity = copy_of_sequence[0]
         if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
-            sequence_of_quantities = reversed(sequence_of_quantities)
-        it = iter(sequence_of_quantities)
-        if initial is None:
-            try:
-                value = next(it)
-            except StopIteration:
-                raise TypeError("reduce() of empty iterable with no initial value") from None
-        else:
-            value = initial
-        for element in it:
-            value = cls.__mul__(value, element)
-        return value
+            copy_of_sequence = reversed(copy_of_sequence)
+        result = copy_of_sequence.pop()
+        while copy_of_sequence:
+            result *= copy_of_sequence.pop()
+        return result
 
 
 
