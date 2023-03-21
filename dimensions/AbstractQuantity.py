@@ -285,6 +285,25 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     @classmethod
+    def sum(cls, sequence_of_quantities: list | tuple | set | frozenset):
+        """
+        @param sequence_of_quantities       Iterable                    A sequence of AbstractQuantity object
+
+        @return                             AbstractQuantity            The result of the sum of all elements
+                                                                        contained in @sequence_of_quantities
+        """
+        copy_of_sequence = [item for item in sequence_of_quantities]
+        first_quantity = copy_of_sequence[0]
+        if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
+            copy_of_sequence = reversed(copy_of_sequence)
+        result = copy_of_sequence.pop()
+        while copy_of_sequence:
+            result += copy_of_sequence.pop()
+        return result
+
+
+
+    @classmethod
     def prod(cls, sequence_of_quantities: list | tuple | set | frozenset):
         """
         @param sequence_of_quantities       Iterable                    A sequence of AbstractQuantity object
