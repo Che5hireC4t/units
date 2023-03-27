@@ -34,6 +34,37 @@ class Unit(object):
 
 
 
+    def __getnewargs__(self) -> tuple:
+        """
+        I have never heard from this magic method until now. According to the docs,
+        __getnewargs__ method is suitable if you want to pickle / unpickle an object
+        from a class overloading the __new__ method.
+
+        Indeed, the magic method __setstate__ is intended to restore the state of an
+        object at unpickling stage. However, it requires this object to already exists
+        (and obviously being empty). Thus, the __new__ method must have already been
+        called to create the object. The default behavior when unpickling an object
+        is passing an empty tuple to the __new__ method. But if __new__ is overloaded
+        to get multiple arguments, python raises the following error during unpickling:
+
+        "TypeError: MyClass.__new__() missing n required positional arguments: ..."
+
+        Thus, __getnewargs__ is there to fix that issue:
+        - It never takes any parameters
+        - It is automatically called on the object at pickling stage
+        - It must return a tuple of variables.
+        - Those variables are saved for unpickling stage
+        - At unpickling stage, those variable are used as parameters for __new__
+
+        More doc there:
+
+        https://peps.python.org/pep-0307/#the-getnewargs-method
+        https://docs.python.org/3/library/pickle.html#object.__getnewargs__
+        """
+        return self.__symbol, self.__long_name, self.__factor_from_si_unit
+
+
+
     @classmethod
     def get_unit_from_raw_symbol(cls, raw_symbol: str) -> tuple:
         returned_symbols = list()
