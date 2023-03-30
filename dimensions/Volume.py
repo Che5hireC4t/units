@@ -14,6 +14,7 @@ class Volume(AbstractQuantity):
             Unit('l', 'liter', 0.001): 0.001,
             Unit('gal', 'gallon(US)', 0.003785411784): 0.003785411784  # https://en.wikipedia.org/wiki/Gallon
         }
+    __ONE_THIRD = 1 / 3
 
 
 
@@ -51,3 +52,21 @@ class Volume(AbstractQuantity):
             new_symbol = self.symbol.replace('3', '')
         new_quantity = cbrt(float(self))
         return Length(new_quantity, new_symbol)
+
+
+
+    def __pow__(self, power: int | float, modulo=None):
+        """
+        @param power            int | float             The exponent. ONLY INTEGERS OR 1/3 ARE SUPPORTED!
+        @param modulo           int                     The modulo
+
+        @return                 AbstractQuantity        The result of pow(@self, @exponent, @modulo)
+
+        @raise                  TypeError               if @exponent is neither an integer nor 1/3
+
+        If @power == 1/3, then return the result of self.cbrt().
+        Otherwise, calls the __pow__ method of AbstractQuantity
+        """
+        if power == self.__ONE_THIRD:
+            return self.cbrt()
+        return super().__pow__(power, modulo)
