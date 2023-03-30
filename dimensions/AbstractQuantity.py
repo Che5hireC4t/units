@@ -645,6 +645,38 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def __pow__(self, exponent: int, modulo=None):
+        """
+        @param exponent         int                     The exponent. ONLY INTEGERS ARE SUPPORTED!
+        @param modulo           int                     The modulo
+
+        @return                 AbstractQuantity        The result of pow(@self, @exponent, @modulo)
+
+        @raise                  TypeError               if @exponent is not an integer.
+
+        Example:
+
+        >>> from dimensions import Length
+        >>> l = Length(2, 'm')
+        >>> s = pow(l, 2)
+        >>> s
+        4.0 m2
+        >>> type(s)
+        <class 'dimensions.Surface.Surface'>
+        """
+        if not isinstance(exponent, int):
+            raise TypeError(f"Exponent must be a strict integer. However, exponent type is {type(exponent)}")
+        new_class = pow(self.__class__, exponent)
+        new_unit_context = \
+            [
+                UnitContext(exponent * context.exponent, context.elementary_unit, context.prefix)
+                for context in self._unit_map
+            ]
+        new_symbol = self.__get_unit_label(sorted(new_unit_context, reverse=True, key=lambda x: x.exponent))
+        return new_class(pow(float(self), exponent, modulo), new_symbol)
+
+
+
     __imul__ = __mul__
 
 
