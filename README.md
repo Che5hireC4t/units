@@ -21,7 +21,7 @@ mistake cost $494.84 million](https://en.wikipedia.org/wiki/Mars_Climate_Orbiter
 
 # Installation
 
-```
+```shell
 $ pip install --user --upgrade numpy pytest
 $ git clone https://github.com/Che5hireC4t/units
 $ python
@@ -32,7 +32,7 @@ as the newly cloned repository.
 
 # Basic usage
 
-```
+```python
 >>> from units.dimensions import Length
 >>> l = Length(1, 'm')
 >>> l
@@ -41,14 +41,14 @@ as the newly cloned repository.
 
 `Length` class is derived from the builtin class `float`. This is also the case for all the dimension classes (Mass,
 Speed, etc...):
-```
+```python
 >>> isinstance(l, float)
 True
 ```
 
 If you try to add / sub quantities belonging to the same dimension, but with different units, the conversion is automatically
 done internally. The result has the same unit that the first quantity:
-```
+```python
 >>> from units.dimensions import Mass
 >>> m1 = Mass(1, 'kg')
 >>> m2 = Mass(1, 'lb')
@@ -58,7 +58,7 @@ done internally. The result has the same unit that the first quantity:
 
 If you try to add / sub quantities belonging to different dimensions, an `IncompatibleUnitError` exception is raised.
 This exception is derived from `TypeError`.
-```
+```python
 >>> from units.dimensions import Pressure
 >>> p = Pressure(1, 'torr')
 >>> p + m2
@@ -71,7 +71,7 @@ dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: torr is incom
 ```
 
 If you perform a multiplication / division between 2 different dimensions, the result will have its dedicated dimension:
-```
+```python
 >>> from units.dimensions import Time
 >>> l = Length(1, 'km')
 >>> t = Time(1, 'h')
@@ -90,7 +90,7 @@ Many physical constants have been redefined. They are sorted in dedicated module
 - molar masses
 - thermodynamics
 
-```
+```python
 >>> from units.constants.geological import EARTH_RADIUS, PRESSURE_AT_SEA_LEVEL
 >>> from units.constants.molar_masses import WATER, SULFUR_DIOXIDE
 >>> EARTH_RADIUS
@@ -106,13 +106,13 @@ Many physical constants have been redefined. They are sorted in dedicated module
 # Limitations
 
 Some unittests have not been fixed yet. To run the unittests, run
-```
+```shell
 $ cd units
 $ pytest
 ```
 
 Quantities objects are ***much*** slower than regular float, as highlighted by the following performance test:
-```
+```python
 >>> from timeit import timeit
 >>> 
 >>> setup = \
