@@ -926,7 +926,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     @staticmethod
     def __prepare_sequence_for_operation(sequence_of_quantities: list | tuple | set | frozenset) -> list:
         copy_of_sequence = [item for item in sequence_of_quantities]
-        first_quantity = copy_of_sequence[0]
+        try:
+            first_quantity = copy_of_sequence[0]
+        except IndexError:  # Happens if sequence_of_quantities is empty
+            raise IndexError('Passing an empty sequence for method "sum".') from None
         if type(first_quantity) in (float, int) or isinstance(first_quantity, number):  # number => numpy.core.number
             copy_of_sequence = reversed(copy_of_sequence)
         return copy_of_sequence
