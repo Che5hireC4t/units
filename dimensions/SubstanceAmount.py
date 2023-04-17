@@ -14,8 +14,8 @@ class SubstanceAmount(AbstractQuantity):
     _DIMENSIONAL_ARRAY = DimensionalArray(substance_amount_exponent=1)
     _UNITS = \
         {
-            Unit('mol', 'mole', 1.0): 1.0,  # https://en.wikipedia.org/wiki/Mole_(unit)
-            Unit('part', 'particle', 1.0/6.02214076e23): 1.0/6.02214076e23
+            Unit('mol', 'mole'): 1.0,  # https://en.wikipedia.org/wiki/Mole_(unit)
+            Unit('part', 'particle'): 1.0/6.02214076e23
         }
 
 

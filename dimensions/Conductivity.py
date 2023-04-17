@@ -17,4 +17,4 @@ class Conductivity(AbstractQuantity):
             time_exponent=3,
             electric_current_exponent=2
         )
-    _UNITS = {Unit('σ', 'sigma', 1.0): 1.0}
+    _UNITS = {Unit('σ', 'sigma'): 1.0}

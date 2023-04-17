@@ -14,4 +14,4 @@ class Resistivity(AbstractQuantity):
             time_exponent=-3,
             electric_current_exponent=-2
         )
-    _UNITS = {Unit('Ω', 'ohm', 1.0): 1}
+    _UNITS = {Unit('Ω', 'ohm'): 1.0}

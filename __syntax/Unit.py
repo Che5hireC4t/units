@@ -4,7 +4,7 @@ from __syntax.Prefix import Prefix
 
 class Unit(object):
 
-    __slots__ = ('__symbol', '__long_name', '__factor_from_si_unit', '__detection_regexp')
+    __slots__ = ('__symbol', '__long_name', '__detection_regexp')
 
     __PREFIX = 'prefix'
     __SYMBOL = 'symbol'
@@ -14,7 +14,7 @@ class Unit(object):
 
 
 
-    def __new__(cls, symbol: str, long_name: str, factor_from_si_unit: float = 1.0):
+    def __new__(cls, symbol: str, long_name: str):
         long_name = str(long_name)
         try:
             instance = cls.__instances[long_name]
@@ -25,10 +25,9 @@ class Unit(object):
 
 
 
-    def __init__(self, symbol: str, long_name: str, factor_from_si_unit: float = 1.0) -> None:
+    def __init__(self, symbol: str, long_name: str) -> None:
         self.__long_name = str(long_name)
         self.__symbol = str(symbol)
-        self.__factor_from_si_unit = float(factor_from_si_unit)
         self.__detection_regexp = self.__craft_detection_regexp(self.__symbol)
         return
 
@@ -61,7 +60,7 @@ class Unit(object):
         https://peps.python.org/pep-0307/#the-getnewargs-method
         https://docs.python.org/3/library/pickle.html#object.__getnewargs__
         """
-        return self.__symbol, self.__long_name, self.__factor_from_si_unit
+        return self.__symbol, self.__long_name
 
 
 
@@ -117,13 +116,3 @@ class Unit(object):
         return self.__symbol
 
     symbol = property(fget=__get_symbol, doc=f"{__get_symbol.__doc__}")
-
-    def __get_factor_from_si(self) -> float:
-        return self.__factor_from_si_unit
-
-    factor_from_si_unit = property(fget=__get_factor_from_si, doc=f"{__get_factor_from_si.__doc__}")
-
-    def __get_is_si(self) -> bool:
-        return self.__factor_from_si_unit == 1.0
-
-    is_si = property(fget=__get_is_si, doc=f"{__get_is_si.__doc__}")

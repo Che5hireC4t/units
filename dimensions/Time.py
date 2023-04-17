@@ -33,12 +33,12 @@ class Time(AbstractQuantity):
     _DIMENSIONAL_ARRAY = DimensionalArray(time_exponent=1)
     _UNITS = \
         {
-            Unit('sec', 'second', 1.0): 1.0,
-            Unit('min', 'minute', 60.0): 60.0,
-            Unit('h', 'hour', 3600.0): 3600.0,
-            Unit('d', 'day', 86400.0): 86400.0,
-            Unit('w', 'week', 604800.0): 604800.0,
-            Unit('y', 'year', 31536000.0): 31536000.0
+            Unit('sec', 'second'): 1.0,
+            Unit('min', 'minute'): 60.0,
+            Unit('h', 'hour'): 3600.0,
+            Unit('d', 'day'): 86400.0,
+            Unit('w', 'week'): 604800.0,
+            Unit('y', 'year'): 31536000.0
         }
 
 

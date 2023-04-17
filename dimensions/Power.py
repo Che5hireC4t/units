@@ -7,4 +7,4 @@ class Power(AbstractQuantity):
     """
 
     _DIMENSIONAL_ARRAY = DimensionalArray(mass_exponent=1, length_exponent=2, time_exponent=-3)
-    _UNITS = {Unit('W', 'watt', 1.0): 1}  # https://en.wikipedia.org/wiki/Watt
+    _UNITS = {Unit('W', 'watt'): 1.0}  # https://en.wikipedia.org/wiki/Watt

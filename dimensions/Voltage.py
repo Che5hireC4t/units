@@ -13,4 +13,4 @@ class Voltage(AbstractQuantity):
             time_exponent=-3,
             electric_current_exponent=-1
         )
-    _UNITS = {Unit('V', 'volt', 1.0): 1.0}  # https://en.wikipedia.org/wiki/Volt
+    _UNITS = {Unit('V', 'volt'): 1.0}  # https://en.wikipedia.org/wiki/Volt

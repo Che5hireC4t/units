@@ -8,7 +8,7 @@ class Frequency(AbstractQuantity):
     """
 
     _DIMENSIONAL_ARRAY = DimensionalArray(time_exponent=-1)
-    _UNITS = {Unit('Hz', 'hertz', 1.0): 1.0}  # https://en.wikipedia.org/wiki/Hertz
+    _UNITS = {Unit('Hz', 'hertz'): 1.0}  # https://en.wikipedia.org/wiki/Hertz
 
 
     def _handle_particular_cases(self, unit_as_string: str) -> (str, str):
