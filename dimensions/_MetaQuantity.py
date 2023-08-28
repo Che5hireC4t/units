@@ -118,3 +118,8 @@ class _MetaQuantity(type):
         return cls._UNITS
 
     UNITS = property(fget=__get_units, doc=f"{__get_units.__doc__}")
+
+    def __is_base_quantity(cls) -> bool:
+        return cls._DIMENSIONAL_ARRAY.is_elementary
+
+    IS_BASE_QUANTITY = property(fget=__is_base_quantity, doc=f"{__is_base_quantity.__doc__}")

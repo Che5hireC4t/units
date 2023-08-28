@@ -1131,3 +1131,26 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
     is_si = property(fget=__get_is_si, doc=f"{__get_is_si.__doc__}")
 # ----------------------------------------------------------------------------------------------------------------------
+
+    def __is_base_quantity(self) -> bool:
+        """
+        TL;DR --> Return true if `self` belongs to one of the following:
+        - Time
+        - Mass
+        - Length
+        - Temperature
+        - SubstanceAmount
+        - ElectricCurrent
+        - LightIntensity
+
+        (and False in any other case)
+
+        Complete answer: the above-mentioned dimensions are called base quantities and their dimensional array
+        is a pure unit in one the 7 dimensions vectorial base axis.
+
+        In practice, this function checks if the dimensional array of the underlying class has exactly one of its
+        values equal to 1, and 0 elsewhere.
+        """
+        return self.__class__.IS_BASE_QUANTITY  # This is a property defined in _MetaQuantity metaclass.
+
+    is_base_quantity = property(fget=__is_base_quantity, doc=f"{__is_base_quantity.__doc__}")
