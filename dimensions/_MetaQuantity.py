@@ -37,17 +37,6 @@ class _MetaQuantity(type):
 
 
 
-    # @classmethod
-    # def which_dimension_has(mcs, unit_symbol: str) -> tuple:
-    #     instances = [dimension_class for dimension_class in mcs.__instances.values() if dimension_class is not float]
-    #     for dimension_class in instances:
-    #         for unit in dimension_class.UNITS:
-    #             if unit.symbol == unit_symbol:
-    #                 return dimension_class, unit
-    #     raise ValueError()
-
-
-
     def __mul__(cls, other_cls) -> type:
         """
         :param cls:         type        The class calling the multiplication operator
