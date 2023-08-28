@@ -316,6 +316,17 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def get_dimensional_part(self, base_dimension) -> int:
+        try:
+            if not base_dimension.IS_BASE_QUANTITY:
+                raise TypeError(f"{base_dimension.__name__} is not a base quantity.")
+            projection = base_dimension.DIMENSIONAL_ARRAY.as_array * self._DIMENSIONAL_ARRAY.as_array
+            return projection.sum()
+        except AttributeError:
+            raise TypeError(f"Unrecognized type: {type(base_dimension)}. Only base quantity classes are accepted.")
+
+
+
 
 #   ███╗   ███╗  █████╗   ██████╗ ██╗  ██████╗     ███╗   ███╗ ███████╗████████╗██╗  ██╗  ██████╗  ██████╗  ███████╗
 #   ████╗ ████║ ██╔══██╗ ██╔════╝ ██║ ██╔════╝     ████╗ ████║ ██╔════╝╚══██╔══╝██║  ██║ ██╔═══██╗ ██╔══██╗ ██╔════╝
