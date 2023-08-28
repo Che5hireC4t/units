@@ -1,4 +1,4 @@
-from numpy import ndarray, array, int8
+from numpy import ndarray, array, int8, sum
 from __syntax import Unit
 from exceptions import BadUnitException
 
@@ -104,3 +104,9 @@ class DimensionalArray(ndarray):
 
 
     as_array = property(fget=__get_array_view, doc=f"{__get_array_view.__doc__}")
+
+    def __is_elementary(self) -> bool:
+        this_as_array = self.view(ndarray)
+        return sum(this_as_array) == 1 and sum(this_as_array == 1) == 1
+
+    is_elementary = property(fget=__is_elementary, doc=f"{__is_elementary.__doc__}")
