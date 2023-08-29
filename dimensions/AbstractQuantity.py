@@ -87,10 +87,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         >>> a.has_same_dimensions_than(c)
         False
         """
-        if type(self) is not type(value):
+        same_type = type(value) is self.__class__
+        if not same_type:
             return False
-        if not strict:
-            return True
+        return self.symbol == value.symbol or not strict
 
 
 
