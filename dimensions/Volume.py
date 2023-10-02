@@ -20,7 +20,7 @@ class Volume(AbstractQuantity):
 
     def cbrt(self) -> Length:
         """
-        @return                 Length        The cubic root of @self, expressed as a Length object.
+        @return                 Length        The cubic root of @cls, expressed as a Length object.
 
         Example:
 
@@ -31,13 +31,13 @@ class Volume(AbstractQuantity):
         >>> type(l)
         <class 'dimensions.Length.Length'>
 
-        If @self is expressed in liters, the resulting unit will be dm (decimeters), because one liter = 1 dm3
+        If @cls is expressed in liters, the resulting unit will be dm (decimeters), because one liter = 1 dm3
         >>> v = Volume(27, 'l')
         >>> l = v.cbrt()
         >>> l
         3.0 dm
 
-        If @self is expressed in US gallons, the resulting unit will be in (inches), because 1 Gal = 231 in3
+        If @cls is expressed in US gallons, the resulting unit will be in (inches), because 1 Gal = 231 in3
         >>> v = Volume(1, 'gal')
         >>> l = v.cbrt()
         >>> l
@@ -60,11 +60,11 @@ class Volume(AbstractQuantity):
         @param power            int | float             The exponent. ONLY INTEGERS OR 1/3 ARE SUPPORTED!
         @param modulo           int                     The modulo
 
-        @return                 AbstractQuantity        The result of pow(@self, @exponent, @modulo)
+        @return                 AbstractQuantity        The result of pow(@cls, @exponent, @modulo)
 
         @raise                  TypeError               if @exponent is neither an integer nor 1/3
 
-        If @power == 1/3, then return the result of self.cbrt().
+        If @power == 1/3, then return the result of cls.cbrt().
         Otherwise, calls the __pow__ method of AbstractQuantity
         """
         if power == self.__ONE_THIRD:

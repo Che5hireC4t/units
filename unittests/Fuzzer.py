@@ -52,7 +52,7 @@ class Fuzzer(Random):
     ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝      ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
     __seed_in_use           str|bytes|bytearray     The source of entropy. If None, current timestamp is used.
     __randomness_map        dict                    A dictionary of type {type: randomness_function}, for instance
-                                                    {bool: lambda: bool(self.randint(0, 1))}
+                                                    {bool: lambda: bool(cls.randint(0, 1))}
     """
 
     # Copied (and improved) from string module (import string). This avoid to do an import just for that.
@@ -101,7 +101,7 @@ class Fuzzer(Random):
     def __init__(self, seed=None) -> None:
         """
         Calls the random parent class, and setup the
-        self.__randomness_map before use.
+        cls.__randomness_map before use.
         """
         super().__init__(seed)
         self.__seed_in_use = seed
@@ -152,7 +152,7 @@ class Fuzzer(Random):
 
     def get_random_datetime(self, min_year: int = MINYEAR, max_year: int = MAXYEAR) -> datetime:
         """
-        @self               Fuzzer          address of the current object (implicit parameter)
+        @cls               Fuzzer          address of the current object (implicit parameter)
         @min_year           int             The minimum year. Default is datetime.MINYEAR = 1
         @max_year           int             The maximum year. Default is datetime.MAXYEAR = 9999
         @return             datetime        A random date between January, 1st, @min_year and
@@ -175,7 +175,7 @@ class Fuzzer(Random):
 
     def get_randstring(self, min: int, max: int, charset: str = None, forbidden_chars: str = '') -> str:
         """
-        @self               Fuzzer          address of the current object (implicit parameter)
+        @cls               Fuzzer          address of the current object (implicit parameter)
         @min                int             The minimum number of chars
         @max                int             The maximum number of chars
         @charset            str = None      The charset to chose in
@@ -207,7 +207,7 @@ class Fuzzer(Random):
 
     def logarithmic_randint(self, max_number_of_digit: int = 50, absolute_value: bool = False) -> int:
         """
-        @self                   Fuzzer          address of the current object (implicit parameter)
+        @cls                   Fuzzer          address of the current object (implicit parameter)
         @max_number_of_digit    int             Maximum number of digit of generated integer
         @absolute_value         bool = False    Should the function return only positive integer?
         @return                 int             A random integer where small integers has same chances
@@ -234,7 +234,7 @@ class Fuzzer(Random):
                 absolute_value: bool = False
             ) -> float:
         """
-        @self                   Fuzzer          address of the current object (implicit parameter)
+        @cls                   Fuzzer          address of the current object (implicit parameter)
         @max_number_of_digit    int             Maximum number of digit of the int part of generated float
         @absolute_value         bool = False    Should the function return only positive floats?
         @return                 float           A random float where small floats has same chances
@@ -243,7 +243,7 @@ class Fuzzer(Random):
         centered on zero. Each power of 10 ranges has the same probability to be chosen. In other words, if
         @max_number_of_digit = 5, a float between [0 - 9] has the same chances to be chosen than a float
         between [10000 - 99999]. In fact, this function create a float by first generating a random integer
-        through the function self.logarithmic_randint, then it create a random float between [0 - 1[ through
+        through the function cls.logarithmic_randint, then it create a random float between [0 - 1[ through
         the random.uniform function, and it returns the sum of both.
         """
         random_integer = self.randint(0, 9)
@@ -264,12 +264,12 @@ class Fuzzer(Random):
                 type_of_imaginary_part=None
             ) -> complex:
         """
-        @self                       Fuzzer          address of the current object (implicit parameter)
+        @cls                       Fuzzer          address of the current object (implicit parameter)
         @max_number_of_digit        int     Maximum number of digit of the real and imaginary parts
         @type_of_real_part          type    Should the real part be an int or a float
         @type_of_imaginary_part     type    Should the imaginary part be an int or a float
         @return                     complex A complex number whereportions may be small or vey huge
-        Generate a random complex through functions self.logarithmic_randint and self.logarithmic_randint.
+        Generate a random complex through functions cls.logarithmic_randint and cls.logarithmic_randint.
         !!! WARNING !!! @type_of_real_part AND @type_of_imaginary_part expect a type, not an instance !
         The following code will raise a TypeError:
         >>> from Unittests.fuzzer import Fuzzer
@@ -291,16 +291,16 @@ class Fuzzer(Random):
 
     def __get_complex_part(self, max_number_of_digit: int, type_of_part) -> (int, float):
         """
-        @self                   Fuzzer          address of the current object (implicit parameter)
+        @cls                   Fuzzer          address of the current object (implicit parameter)
         @max_number_of_digit    int     Maximum number of digit of the real and imaginary parts
         @type_of_part           type    Should the real part be an int or a float
         @return                 int|float   A numeric value dedicated to be assigned to a complex portion
-        Method called by self.logarithmic_random_complex in order to compute the real
+        Method called by cls.logarithmic_random_complex in order to compute the real
         and imaginary portion.
         If @type_of_part is type(int), then a random signed integer will be returned
-        (generated through self.logarithmic_randint).
+        (generated through cls.logarithmic_randint).
         If it is @type_of_part is type(float), then a random signed float will be returned
-        (generated through self.logarithmic_randfloat).
+        (generated through cls.logarithmic_randfloat).
         If @type_of_part is None, then return value type will be determined randomly, with
         same probabilities between integer and float.
         """
@@ -327,12 +327,12 @@ class Fuzzer(Random):
 
     def get_random_exception_object(self) -> BaseException:
         """
-        @self       Fuzzer          address of the current object (implicit parameter)
+        @cls       Fuzzer          address of the current object (implicit parameter)
         @return     BaseException   A random exception with a random error message
         This method does the following:
             - Retrieves a list of all builtin python exception
-            - Generate a random error message through self.get_randstring() with a length
-              generated through self.logarithmic_randint() (So it may be very huge)
+            - Generate a random error message through cls.get_randstring() with a length
+              generated through cls.logarithmic_randint() (So it may be very huge)
             - Select one randomly
             - Try to raise it, catch all and return the caught exception object
         """
@@ -353,7 +353,7 @@ class Fuzzer(Random):
         """
         Takes a random class from cls.__TYPES and return
         an instance of this class. It do it by calling
-        self.get_random_list and returns the first element.
+        cls.get_random_list and returns the first element.
         """
         while True:
             try:
@@ -372,7 +372,7 @@ class Fuzzer(Random):
                 number_of_previous_calls: int = 0,
             ) -> list:
         """
-        @self                       Fuzzer      address of the current object (implicit parameter)
+        @cls                       Fuzzer      address of the current object (implicit parameter)
         @max_number_of_elements     int         max length of the returned list object
         @deepness                   int         Max level of nesting. For instance, if @deepness = 1,
                                                 then, the returned list cannot contain containers objects.
@@ -432,7 +432,7 @@ class Fuzzer(Random):
             number_of_previous_calls: int = 0
         ) -> tuple:
         """
-        @self                       Fuzzer      address of the current object (implicit parameter)
+        @cls                       Fuzzer      address of the current object (implicit parameter)
         @max_number_of_elements     int         max length of the returned tuple object
         @deepness                   int         Max level of nesting. For instance, if @deepness = 1,
                                                 then, the returned tuple cannot contain containers objects.
@@ -442,8 +442,8 @@ class Fuzzer(Random):
         @number_of_previous_calls    int        Argument used to handle the recursion. Internal cooking.
                                                 !!! DON'T TOUCH THIS ARGUMENT !!!
         @return                      tuple      A tuple containing random objects of any type
-        Convert a random list got through self.get_random_list() into a tuple. See this method description.
-        !!! WARNING !!! Same warning than self.get_random_list()
+        Convert a random list got through cls.get_random_list() into a tuple. See this method description.
+        !!! WARNING !!! Same warning than cls.get_random_list()
         """
         return tuple(self.get_random_list(max_number_of_elements, deepness, jsonable, number_of_previous_calls))
 
@@ -458,7 +458,7 @@ class Fuzzer(Random):
                 number_of_previous_calls: int = 0
             ) -> tuple:
         """
-        @self                       Fuzzer      address of the current object (implicit parameter)
+        @cls                       Fuzzer      address of the current object (implicit parameter)
         @max_number_of_elements     int         max length of the returned tuple object
         @deepness                   int         Max level of nesting. For instance, if @deepness = 1,
                                                 then, the returned tuple cannot contain containers objects.
@@ -468,14 +468,14 @@ class Fuzzer(Random):
         @number_of_previous_calls    int        Argument used to handle the recursion. Internal cooking.
                                                 !!! DON'T TOUCH THIS ARGUMENT !!!
         @return                      tuple      A hashable tuple containing random objects of any type
-        This method is quite similar to self.get_random_tuple, but have a subtlety. In many python
+        This method is quite similar to cls.get_random_tuple, but have a subtlety. In many python
         documentation, tuple are presented as immutable object. So one may suppose that as it is immutable,
         it is necessarily hashable and can be used in sets and as dictionary keys. This is wrong. A set
-        is hashable if and only if it contains hashable object. And practically, the method self.get_random_tuple
+        is hashable if and only if it contains hashable object. And practically, the method cls.get_random_tuple
         generates non-hashable tuples (because they may contain lists and dictionaries which are mutable.
         So this is the purpose of this function. So as a consequence, tuples generated by this method
         DOES NOT contain any mutable objects.
-        !!! WARNING !!! Same warning than self.get_random_list()
+        !!! WARNING !!! Same warning than cls.get_random_list()
         """
         if jsonable:
             filter = lambda type_: self.__TYPES[type_][self.__IS_JSONABLE]
@@ -525,7 +525,7 @@ class Fuzzer(Random):
                 number_of_previous_calls: int = 0
             ) -> dict:
         """
-        @self                       Fuzzer      address of the current object (implicit parameter)
+        @cls                       Fuzzer      address of the current object (implicit parameter)
         @max_number_of_elements     int         max length of the returned list object
         @deepness                   int         Max level of nesting. For instance, if @deepness = 1,
                                                 then, the returned dict cannot contain containers objects.
@@ -565,7 +565,7 @@ class Fuzzer(Random):
                 number_of_previous_calls: int = 0
             ) -> set:
         """
-        @self                       Fuzzer      address of the current object (implicit parameter)
+        @cls                       Fuzzer      address of the current object (implicit parameter)
         @max_number_of_elements     int         max length of the returned list object
         @deepness                   int         Max level of nesting. For instance, if @deepness = 1,
                                                 then, the returned set cannot contain containers objects.
@@ -580,9 +580,9 @@ class Fuzzer(Random):
                                                 !!! DON'T TOUCH THIS ARGUMENT !!!
         @return                      set        A set containing random hashable objects of any types
         This method returns a set of random length, composed of random hashable object (so immutable objects)
-        (int, str, exceptions, etc...). In fact, it calls self.get_random_hashable_tuple, and turn the
+        (int, str, exceptions, etc...). In fact, it calls cls.get_random_hashable_tuple, and turn the
         resulting tuple into a set.
-        !!! WARNING !!! Same warning than self.get_random_list()
+        !!! WARNING !!! Same warning than cls.get_random_list()
         """
         return set(self.get_random_hashable_tuple(max_number_of_elements, deepness, False, number_of_previous_calls))
 

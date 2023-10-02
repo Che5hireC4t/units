@@ -10,7 +10,7 @@ class Surface(AbstractQuantity):
 
     def sqrt(self) -> Length:
         """
-        @return                 Length        The square root of @self, expressed as a Length object.
+        @return                 Length        The square root of @cls, expressed as a Length object.
 
         Example:
 
@@ -32,11 +32,11 @@ class Surface(AbstractQuantity):
         @param power            int | float             The exponent. ONLY INTEGERS OR 0.5 ARE SUPPORTED!
         @param modulo           int                     The modulo
 
-        @return                 AbstractQuantity        The result of pow(@self, @exponent, @modulo)
+        @return                 AbstractQuantity        The result of pow(@cls, @exponent, @modulo)
 
         @raise                  TypeError               if @exponent is neither an integer nor 0.5
 
-        If @power == 0.5, then return the result of self.sqrt().
+        If @power == 0.5, then return the result of cls.sqrt().
         Otherwise, calls the __pow__ method of AbstractQuantity
         """
         if power == 0.5:
