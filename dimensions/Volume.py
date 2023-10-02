@@ -1,4 +1,9 @@
-from math import cbrt
+try:
+    from math import cbrt  # cbrt has been introduced in python 3.11.
+except ImportError:
+    def cbrt(number: float):
+        return pow(number, (1/3))
+
 from .Length import Length, AbstractQuantity, Unit, DimensionalArray
 
 
