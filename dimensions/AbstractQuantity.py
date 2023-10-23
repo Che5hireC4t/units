@@ -760,7 +760,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             converted_other = self.__try_conversion(other)
             return float(self) != float(converted_other)
         except IncompatibleUnitError:
-            return False
+            return True
 
 
 
