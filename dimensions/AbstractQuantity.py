@@ -733,8 +733,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: Impossible to compare 1.0 g (Mass)
         and 1.0 m sec-1 (Speed): dimensions are different.
         """
-        converted_other = self.__try_conversion(other)
-        return float(self) == float(converted_other)
+        try:
+            converted_other = self.__try_conversion(other)
+            return float(self) == float(converted_other)
+        except IncompatibleUnitError:
+            return False
 
 
 
@@ -753,8 +756,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         Magic method called automatically when using "!=" (different) operator. For instance q1 != q2.
         Read docstring of __eq__ magic method as this method is very similar.
         """
-        converted_other = self.__try_conversion(other)
-        return float(self) != float(converted_other)
+        try:
+            converted_other = self.__try_conversion(other)
+            return float(self) != float(converted_other)
+        except IncompatibleUnitError:
+            return False
 
 
 
