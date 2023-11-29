@@ -857,14 +857,26 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     def __format__(self, format_spec: str = '') -> str:
         if format_spec == '':
             return self.__str__()
-        if format_spec == 'e':
-            return format(float(self), format_spec)
-        if format_spec == 'eng':
+        try:
+            flags = format_spec.split('+')
+        except (AttributeError, TypeError):  # TypeError is raised if format_spec is Bytes.
+            raise TypeError(f"Format spec must be a string. {str(type(format_spec))} instead.") from None
+        assert len(flags) != 0, f"Flags length = 0. Input value = {str(format_spec)}"
+        notation = flags[0]
+        if len(flags) > 1:
+            if flags[1] != 's':
+                raise ValueError(f"Incorrect symbol flag: +{flags[1]}. Should be +s")
+            symbol = f" {self.__get_unit_label(self._unit_map, False)}"
+        else:
+            symbol = ''
+        if notation == 'e':
+            return f"{float(self):e}{symbol}"
+        if notation == 'eng':
             exponent = len(str(int(self))) - 1
             exponent -= exponent % 3
             displayed_number = float(self) / pow(10, exponent)
-            return f"{displayed_number}e{exponent}"
-        raise ValueError(f"Format spec {format_spec} not supported.")
+            return f"{displayed_number}e{exponent}{symbol}"
+        raise ValueError(f"Format spec {notation} not supported.")
 
 
 
