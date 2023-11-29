@@ -1202,3 +1202,14 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         return self.__class__.IS_BASE_QUANTITY  # This is a property defined in _MetaQuantity metaclass.
 
     is_base_quantity = property(fget=__is_base_quantity, doc=f"{__is_base_quantity.__doc__}")
+# ----------------------------------------------------------------------------------------------------------------------
+
+    def __get_precision(self) -> int | None:
+        """
+        How precise self is known? This is related to how many digits after comma there is?
+
+        https://en.wikipedia.org/wiki/Precision_(computer_science)
+        """
+        return self._precision
+
+    precision = property(fget=__get_precision, doc=f"{__get_precision.__doc__}")
