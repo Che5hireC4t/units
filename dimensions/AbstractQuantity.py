@@ -30,6 +30,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     _unit_map           list        List of UnitContext objects, containing descriptions of assigned units.
     _factor_from_si     float       If @self is multiplied by this factor,
                                     it allows to convert @self to international unit
+    _precision          int         Precision of the measurement. Can be None in case of coefficients.
 
 
 
@@ -46,7 +47,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     is_si               -->     _                   bool        Read Only
     """
 
-    __slots__ = ('_unit_map', '_factor_from_si')
+    __slots__ = ('_unit_map', '_factor_from_si', '_precision')
 
     _UNIT_DETECTION_REGEXP = compile(r'^(?P<prefix>da|[YZEPTGMkKhHdcmµnpfazy])?(?P<symbol>[a-zA-Z]+)(?P<exponent>-?[0-9]+)?$')
     _NUMBER_DETECTION_REGEXP = compile(r'^[0123456789.-]+')
@@ -354,6 +355,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     def __init__(self, value: int | float | str, unit: str = None, precision: int | None = None) -> None:
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
+            self._precision = precision
         except KeyError:
             self.__init_from_scratch(value, unit)
         return
