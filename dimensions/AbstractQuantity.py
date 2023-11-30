@@ -353,9 +353,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __init__(self, value: int | float | str, unit: str = None, precision: int | None = None) -> None:
+        self._precision = precision
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
-            self._precision = precision
         except KeyError:
             self.__init_from_scratch(value, unit)
         return
