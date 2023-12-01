@@ -925,7 +925,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             >>> x  # This line calls __repr__
             1.0 m
             """
-            return self.__str__()
+            return self.__format__('+s')
 
 
 
