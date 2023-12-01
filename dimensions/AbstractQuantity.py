@@ -1,6 +1,6 @@
 from itertools import product
 from re import compile, match
-from math import prod, pow as power
+from math import prod, pow as power, floor, ceil, log10
 from numpy.core import number
 
 from __syntax import Prefix, UnitContext, Unit
@@ -860,8 +860,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __format__(self, format_spec: str = '') -> str:
-        if format_spec == '':
-            return self.__str__()
+        value_as_float = float(self)
+        decimal_places = self.__get_decimal_places(abs(value_as_float))
+        self_rounded = round(value_as_float, decimal_places)
         try:
             flags = format_spec.split('+')
         except (AttributeError, TypeError):  # TypeError is raised if format_spec is Bytes.
@@ -874,13 +875,19 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             symbol = f" {self.__get_unit_label(self._unit_map, False)}"
         else:
             symbol = ''
+        if notation == '':
+            if isinstance(self_rounded, int):
+                return f"{self_rounded}{symbol}"
+            else:
+                return f"{self_rounded:.{decimal_places}f}{symbol}"
         if notation == 'e':
-            return f"{float(self):e}{symbol}"
+            return f"{float(self):.{self._precision - 1}e}{symbol}"
         if notation == 'eng':
-            exponent = len(str(int(self))) - 1
+            exponent = int(floor(log10(abs(self_rounded))))
             exponent -= exponent % 3
-            displayed_number = float(self) / pow(10, exponent)
-            return f"{displayed_number}e{exponent}{symbol}"
+            displayed_number = self_rounded / pow(10, exponent)
+            decimal_places = self.__get_decimal_places(abs(displayed_number))
+            return f"{displayed_number:.{decimal_places}f}e{exponent}{symbol}"
         raise ValueError(f"Format spec {notation} not supported.")
 
 
@@ -959,6 +966,19 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             factor = power(base_factor * power(10, prefix.ten_power), exponent)
             factors.append(factor)
         return prod(factors)
+
+
+
+    def __get_decimal_places(self, abs_value: float = None) -> int:
+        try:
+            if abs_value >= 1.0:
+                decimal_places = self._precision - floor(log10(abs_value)) - 1
+            else:
+                decimal_places = self._precision - ceil(log10(abs_value))
+            return decimal_places
+        except TypeError:
+            self_as_float = abs(float(self))
+            return self.__get_decimal_places(self_as_float)
 
 
 
