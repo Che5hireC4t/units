@@ -861,6 +861,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def __format__(self, format_spec: str = '') -> str:
+        if format_spec in self._format_cache:
+            return self._format_cache[format_spec]
         value_as_float = float(self)
         decimal_places = self.__get_decimal_places(abs(value_as_float))
         self_rounded = round(value_as_float, decimal_places)
@@ -878,17 +880,23 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             symbol = ''
         if notation == '':
             if isinstance(self_rounded, int):
-                return f"{self_rounded}{symbol}"
+                return_value = f"{self_rounded}{symbol}"
             else:
-                return f"{self_rounded:.{decimal_places}f}{symbol}"
+                return_value = f"{self_rounded:.{decimal_places}f}{symbol}"
+            self._format_cache[format_spec] = return_value
+            return return_value
         if notation == 'e':
-            return f"{float(self):.{self._precision - 1}e}{symbol}"
+            return_value = f"{float(self):.{self._precision - 1}e}{symbol}"
+            self._format_cache[format_spec] = return_value
+            return return_value
         if notation == 'eng':
             exponent = int(floor(log10(abs(self_rounded))))
             exponent -= exponent % 3
             displayed_number = self_rounded / pow(10, exponent)
             decimal_places = self.__get_decimal_places(abs(displayed_number))
-            return f"{displayed_number:.{decimal_places}f}e{exponent}{symbol}"
+            return_value = f"{displayed_number:.{decimal_places}f}e{exponent}{symbol}"
+            self._format_cache[format_spec] = return_value
+            return return_value
         raise ValueError(f"Format spec {notation} not supported.")
 
 
