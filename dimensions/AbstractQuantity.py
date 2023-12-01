@@ -864,8 +864,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if format_spec in self._format_cache:
             return self._format_cache[format_spec]
         value_as_float = float(self)
-        decimal_places = self.__get_decimal_places(abs(value_as_float))
-        self_rounded = round(value_as_float, decimal_places)
+        if self._precision is None:
+            decimal_places = 6  # This is the default value for float formatting when no precision is set.
+            self_rounded = value_as_float
+        else:
+            decimal_places = self.__get_decimal_places(abs(value_as_float))
+            self_rounded = round(value_as_float, decimal_places)
         try:
             flags = format_spec.split('+')
         except (AttributeError, TypeError):  # TypeError is raised if format_spec is Bytes.
@@ -886,14 +890,18 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             self._format_cache[format_spec] = return_value
             return return_value
         if notation == 'e':
-            return_value = f"{float(self):.{self._precision - 1}e}{symbol}"
+            e_decimals = 6 if self._precision is None else self._precision - 1
+            return_value = f"{float(self):.{e_decimals}e}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
         if notation == 'eng':
             exponent = int(floor(log10(abs(self_rounded))))
             exponent -= exponent % 3
             displayed_number = self_rounded / pow(10, exponent)
-            decimal_places = self.__get_decimal_places(abs(displayed_number))
+            if self._precision is None:
+                decimal_places = 6
+            else:
+                decimal_places = self.__get_decimal_places(abs(displayed_number))
             return_value = f"{displayed_number:.{decimal_places}f}e{exponent}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
