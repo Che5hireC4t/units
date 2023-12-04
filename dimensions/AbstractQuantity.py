@@ -884,8 +884,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         else:
             symbol = ''
         if notation == '':
-            if isinstance(self_rounded, int):
-                return_value = f"{self_rounded}{symbol}"
+            if decimal_places <= 0:
+                return_value = f"{int(self_rounded)}{symbol}"
             else:
                 return_value = f"{self_rounded:.{decimal_places}f}{symbol}"
             self._format_cache[format_spec] = return_value
