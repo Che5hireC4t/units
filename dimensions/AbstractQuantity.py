@@ -891,7 +891,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             self._format_cache[format_spec] = return_value
             return return_value
         if notation == 'e':
-            e_decimals = 6 if self._precision is None else self._precision - 1
+            e_decimals = 6 if self._precision is None else self._significant_digits - 1
             return_value = f"{float(self):.{e_decimals}e}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
