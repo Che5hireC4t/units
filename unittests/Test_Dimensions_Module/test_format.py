@@ -40,7 +40,7 @@ NUMBERS_FORMAT_PLAIN = \
             "test": 123456789.123456,
             "precision": 6,
             "significant digits": 15,
-            "expected": "1 23456789.123456",
+            "expected": "123456789.123456",
             "expected e": "1.23456789123456e+08",
             "expected eng": "123.456789123456e+06"
         },
