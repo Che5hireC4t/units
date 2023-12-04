@@ -902,11 +902,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             exponent = int(floor(log10(abs(self_rounded))))
             exponent -= exponent % 3
             displayed_number = self_rounded / pow(10, exponent)
+            exponent_sign = '+' if exponent >= 0 else '-'
             if self._precision is None:
                 decimal_places = 6
             else:
                 decimal_places = self._significant_digits - exponent
-            return_value = f"{displayed_number:.{decimal_places}f}e{exponent}{symbol}"
+            return_value = f"{displayed_number:.{decimal_places}f}e{exponent_sign}{abs(exponent):02d}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
         raise ValueError(f"Format spec {notation} not supported.")
