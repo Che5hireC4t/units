@@ -37,6 +37,14 @@ NUMBERS_FORMAT_PLAIN = \
             "expected eng": "60e+00"
         },
         {
+            "test": 56.789,
+            "precision": -3,
+            "significant digits": 1,
+            "expected": "0",
+            "expected e": "0e+03",
+            "expected eng": "0e+03"
+        },
+        {
             "test": 123456789.123456,
             "precision": 6,
             "significant digits": 15,
