@@ -341,9 +341,6 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     #-----------------------#
 
     def __new__(cls, value: int | float | str, unit: str = '', precision: int | None = None):
-        if precision is not None:
-            if not isinstance(precision, int):
-                raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
         try:
             return super(AbstractQuantity, cls).__new__(cls, value)
         except ValueError:  # If value is a string with a unit :
@@ -354,6 +351,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
     def __init__(self, value: int | float | str, unit: str = None, precision: int | None = None) -> None:
         self._precision = precision
+        if precision is not None:
+            if not isinstance(precision, int):
+                raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
         self._format_cache = dict()
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
