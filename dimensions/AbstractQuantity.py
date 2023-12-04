@@ -869,7 +869,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             decimal_places = 6  # This is the default value for float formatting when no precision is set.
             self_rounded = value_as_float
         else:
-            decimal_places = self.__get_decimal_places(abs(value_as_float))
+            decimal_places = self._precision
             self_rounded = round(value_as_float, decimal_places)
         try:
             flags = format_spec.split('+')
@@ -984,19 +984,6 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             factor = power(base_factor * power(10, prefix.ten_power), exponent)
             factors.append(factor)
         return prod(factors)
-
-
-
-    def __get_decimal_places(self, abs_value: float = None) -> int:
-        try:
-            if abs_value >= 1.0:
-                decimal_places = self._precision - floor(log10(abs_value)) - 1
-            else:
-                decimal_places = self._precision - ceil(log10(abs_value))
-            return decimal_places
-        except TypeError:
-            self_as_float = abs(float(self))
-            return self.__get_decimal_places(self_as_float)
 
 
 
