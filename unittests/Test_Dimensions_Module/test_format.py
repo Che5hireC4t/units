@@ -10,7 +10,7 @@ NUMBERS_FORMAT_PLAIN = \
             "significant digits": 7,
             "expected": "56.78900",
             "expected e": "5.678900e+01",
-            "expected eng": "5.678900e+01"
+            "expected eng": "56.78900e+00"
         },
         {
             "test": 56.789,
@@ -18,7 +18,7 @@ NUMBERS_FORMAT_PLAIN = \
             "significant digits": 3,
             "expected": "56.8",
             "expected e": "5.68e+01",
-            "expected eng": "5.68e+01"
+            "expected eng": "56.8e+00"
         },
         {
             "test": 56.789,
@@ -26,7 +26,7 @@ NUMBERS_FORMAT_PLAIN = \
             "significant digits": 2,
             "expected": "57",
             "expected e": "5.7e+01",
-            "expected eng": "5.7e+01"
+            "expected eng": "57e+00"
         },
         {
             "test": 56.789,
@@ -34,7 +34,7 @@ NUMBERS_FORMAT_PLAIN = \
             "significant digits": 1,
             "expected": "60",
             "expected e": "6e+01",
-            "expected eng": "6e+01"
+            "expected eng": "60e+00"
         },
         {
             "test": 123456789.123456,
@@ -117,5 +117,14 @@ def test_format_scientific(test_data):
     length = Length(test_data['test'], 'm', test_data['precision'])
     expected_string = test_data['expected e']
     real_string = f"{length:e}"
+    assert expected_string == real_string
+    return
+
+
+@pytest.mark.parametrize('test_data', NUMBERS_FORMAT_PLAIN)
+def test_format_engineer(test_data):
+    length = Length(test_data['test'], 'm', test_data['precision'])
+    expected_string = test_data['expected eng']
+    real_string = f"{length:eng}"
     assert expected_string == real_string
     return
