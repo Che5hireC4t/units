@@ -40,17 +40,17 @@ NUMBERS_FORMAT_PLAIN = \
             "test": 123456789.123456,
             "precision": 6,
             "significant digits": 15,
-            "expected": "123456789.123456",
-            "expected e": "1.2345789123456e+08",
-            "expected eng": "123.45789123456e+06"
+            "expected": "1 23456789.123456",
+            "expected e": "1.23456789123456e+08",
+            "expected eng": "123.456789123456e+06"
         },
         {
             "test": 123456789.123456,
             "precision": 4,
             "significant digits": 13,
             "expected": "123456789.1235",
-            "expected e": "1.23457891235e+08",
-            "expected eng": "123.457891235e+06"
+            "expected e": "1.234567891235e+08",
+            "expected eng": "123.4567891235e+06"
         },
         {
             "test": 123456789.123456,
