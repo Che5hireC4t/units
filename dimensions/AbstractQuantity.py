@@ -905,7 +905,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             if self._precision is None:
                 decimal_places = 6
             else:
-                decimal_places = self.__get_decimal_places(abs(displayed_number))
+                decimal_places = self._significant_digits - exponent
             return_value = f"{displayed_number:.{decimal_places}f}e{exponent}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
