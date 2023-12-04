@@ -899,7 +899,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             self._format_cache[format_spec] = return_value
             return return_value
         if notation == 'eng':
-            exponent = int(floor(log10(abs(self_rounded))))
+            try:
+                exponent = int(floor(log10(abs(self_rounded))))
+            except ValueError:
+                exponent = -1 * decimal_places
             exponent_modulo = exponent % 3
             exponent -= exponent_modulo
             displayed_number = self_rounded / pow(10, exponent)
@@ -908,7 +911,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
                 decimal_places = 6
             else:
                 decimal_places = self._significant_digits - exponent_modulo - 1
-            return_value = f"{displayed_number:.{decimal_places}f}e{exponent_sign}{abs(exponent):02d}{symbol}"
+            if decimal_places <= 0:
+                return_value = f"{int(displayed_number)}e{exponent_sign}{abs(exponent):02d}{symbol}"
+            else:
+                return_value = f"{displayed_number:.{decimal_places}f}e{exponent_sign}{abs(exponent):02d}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
         raise ValueError(f"Format spec {notation} not supported.")
