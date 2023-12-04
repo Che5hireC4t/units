@@ -1251,3 +1251,13 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         return self._precision
 
     precision = property(fget=__get_precision, doc=f"{__get_precision.__doc__}")
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+    def __get_significant_digits(self) -> int | None:
+        """
+        https://en.wikipedia.org/wiki/Significant_figures
+        """
+        return self._significant_digits
+
+    significant_digits = property(fget=__get_significant_digits, doc=f"{__get_significant_digits.__doc__}")
