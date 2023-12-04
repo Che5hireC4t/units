@@ -54,6 +54,14 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     _DIMENSIONAL_ARRAY = DimensionalArray(127, 127, 127, 127, 127, 127, 127)
     _UNITS = dict()
 
+    __MAPPED_FLOAT_COMPARATORS = \
+        {
+            0: float.__lt__,
+            1: float.__le__,
+            2: float.__gt__,
+            3: float.__ge__
+        }
+
     __context_cache = dict()
 
 
@@ -739,10 +747,34 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             raise IncompatibleUnitError(error_message)
         dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: Impossible to compare 1.0 g (Mass)
         and 1.0 m sec-1 (Speed): dimensions are different.
+
+
+        This method takes into account the precision of compared quantities:
+        - If one quantity has a precision set to None, then it just compare the values.
+        - If both quantities has a precision set, this method return True
+          only and if only both value and precision are equal
+
+        Examples:
+        >>> m1 = Mass(1, 'g', None) # None is the default value in constructor
+        >>> m2 = Mass(1, 'g', None)
+        >>> m1 == m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(1, 'g', None)
+        >>> m1 == m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(1.0, 'g', 1) # Then, m2 = 1.0 g
+        >>> m1 == m2
+        False
         """
         try:
             converted_other = self.__try_conversion(other)
-            return float(self) == float(converted_other)
+            if self._precision is None or converted_other.precision is None:
+                return float(self) == float(converted_other)
+            return float(self) == float(converted_other) and self._precision == converted_other.precision
         except IncompatibleUnitError:
             return False
 
@@ -762,10 +794,34 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         Magic method called automatically when using "!=" (different) operator. For instance q1 != q2.
         Read docstring of __eq__ magic method as this method is very similar.
+
+
+        This method takes into account the precision of compared quantities:
+        - If one quantity has a precision set to None, then it just compare the values.
+        - If both quantities has a precision set, this method return True
+          only and if only value or precision are different
+
+        Examples:
+        >>> m1 = Mass(1, 'g', None) # None is the default value in constructor
+        >>> m2 = Mass(1, 'g', None)
+        >>> m1 != m2
+        False
+
+        >>> m1 = Mass(1, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(1, 'g', None)
+        >>> m1 != m2
+        False
+
+        >>> m1 = Mass(1, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(1, 'g', 1) # Then, m2 = 1.0 g
+        >>> m1 != m2
+        True
         """
         try:
             converted_other = self.__try_conversion(other)
-            return float(self) != float(converted_other)
+            if self._precision is None or converted_other.precision is None:
+                return float(self) != float(converted_other)
+            return float(self) != float(converted_other) or self._precision != converted_other.precision
         except IncompatibleUnitError:
             return True
 
@@ -785,9 +841,35 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         Magic method called automatically when using "<" (lower than) operator. For instance q1 < q2.
         Read docstring of __eq__ magic method as this method is very similar.
+
+
+        This method takes into account the precision of compared quantities:
+        - If one quantity has a precision set to None, then it just compare the values.
+        - If both quantities has a precision set, this method return True
+          if and only if first value < second value and uncertainties does not overlap
+
+        Examples:
+        >>> m1 = Mass(1, 'g', None) # None is the default value in constructor
+        >>> m2 = Mass(2, 'g', None)
+        >>> m1 < m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2, 'g', None)
+        >>> m1 < m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2.0, 'g', 1) # Then, m2 = 2.0 g
+        >>> m1 < m2 # There, all values between [0.999: 1.001] are lower than all values between [1.9: 2.1]
+        True
+
+        >>> m1 = Mass(1.199, 'g', 3) # Then, m1 = 1.199 g
+        >>> m2 = Mass(1.2, 'g', 1) # Then, m2 = 1.2 g
+        >>> m1 < m2 # There, maybe m1 is in fact 1.200 g and m2 is in fact 1.1 g
+        False
         """
-        converted_other = self.__try_conversion(other)
-        return float(self) < float(converted_other)
+        return self.__compare(other, 0, False)
 
 
 
@@ -805,9 +887,30 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         Magic method called automatically when using "<=" (lower or equal) operator. For instance q1 <= q2.
         Read docstring of __eq__ magic method as this method is very similar.
+
+
+        Examples:
+        >>> m1 = Mass(1, 'g', None) # None is the default value in constructor
+        >>> m2 = Mass(2, 'g', None)
+        >>> m1 <= m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2, 'g', None)
+        >>> m1 <= m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2.0, 'g', 1) # Then, m2 = 2.0 g
+        >>> m1 <= m2 # There, all values between [0.999: 1.001] are lower than all values between [1.9: 2.1]
+        True
+
+        >>> m1 = Mass(1.199, 'g', 3) # Then, m1 = 1.199 g
+        >>> m2 = Mass(1.2, 'g', 1) # Then, m2 = 1.2 g
+        >>> m1 <= m2 # There, maybe m1 is in fact 1.200 g and m2 is in fact 1.1 g
+        False
         """
-        converted_other = self.__try_conversion(other)
-        return float(self) <= float(converted_other)
+        return self.__compare(other, 0, True)
 
 
 
@@ -825,9 +928,29 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         Magic method called automatically when using ">" (greater than) operator. For instance q1 > q2.
         Read docstring of __eq__ magic method as this method is very similar.
+
+        Examples:
+        >>> m1 = Mass(1, 'g', None) # None is the default value in constructor
+        >>> m2 = Mass(2, 'g', None)
+        >>> m2 > m1
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2, 'g', None)
+        >>> m2 > m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2.0, 'g', 1) # Then, m2 = 2.0 g
+        >>> m2 > m1 # There, all values between [1.9: 2.1] are greater than all values between [0.999: 1.001]
+        True
+
+        >>> m1 = Mass(1.199, 'g', 3) # Then, m1 = 1.199 g
+        >>> m2 = Mass(1.2, 'g', 1) # Then, m2 = 1.2 g
+        >>> m2 > m1 # There, maybe m1 is in fact 1.200 g and m2 is in fact 1.1 g
+        False
         """
-        converted_other = self.__try_conversion(other)
-        return float(self) > float(converted_other)
+        return self.__compare(other, 2, False)
 
 
 
@@ -845,10 +968,29 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
         Magic method called automatically when using ">=" (greater or equal) operator. For instance q1 >= q2.
         Read docstring of __eq__ magic method as this method is very similar.
-        """
-        converted_other = self.__try_conversion(other)
-        return float(self) >= float(converted_other)
 
+        Examples:
+        >>> m1 = Mass(1, 'g', None) # None is the default value in constructor
+        >>> m2 = Mass(2, 'g', None)
+        >>> m2 >= m1
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2, 'g', None)
+        >>> m2 >= m2
+        True
+
+        >>> m1 = Mass(1.000, 'g', 3) # Then, m1 = 1.000 g
+        >>> m2 = Mass(2.0, 'g', 1) # Then, m2 = 2.0 g
+        >>> m2 >= m1 # There, all values between [1.9: 2.1] are greater than all values between [0.999: 1.001]
+        True
+
+        >>> m1 = Mass(1.199, 'g', 3) # Then, m1 = 1.199 g
+        >>> m2 = Mass(1.2, 'g', 1) # Then, m2 = 1.2 g
+        >>> m2 >= m1 # There, maybe m1 is in fact 1.200 g and m2 is in fact 1.1 g
+        False
+        """
+        return self.__compare(other, 2, True)
 
 
 
@@ -996,6 +1138,60 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             factor = power(base_factor * power(10, prefix.ten_power), exponent)
             factors.append(factor)
         return prod(factors)
+
+
+
+    def __compare(self, other, comparator_index: int, equality: bool) -> bool:
+        """
+        Compare the current instance with another object using specified float comparators.
+
+        This method performs a comparison between the current instance and another object,
+        using a specific comparator based on the provided index.
+        The comparison takes into account the precision of both objects and can also check for equality.
+
+        :param other:
+        The object to compare with the current instance. It is attempted to be converted to a compatible type.
+
+        :param comparator_index:
+        An integer index to select the appropriate comparator from `__MAPPED_FLOAT_COMPARATORS`.
+        Valid indices are
+            - 0 for less than,
+            - 1 for less than or equal,
+            - 2 for greater than
+            - 3 for greater than or equal
+
+        :param equality: A boolean flag indicating whether to check for equality.
+        If True, equality is checked based on both value and precision.
+
+        :return: Returns True if the comparison based on the selected comparator is successful, otherwise False.
+
+        The comparison logic includes checking for precision and adjusting the comparison values
+        based on the precision of the objects. If the precision is not set (None),
+        a different comparator is used for equality check.
+
+        Note:
+        - The method uses `__MAPPED_FLOAT_COMPARATORS` for selecting the comparator function.
+        - The comparison takes into account the precision of both objects, if available.
+        - The method is designed to be used internally within the class and is not part of the public interface.
+        """
+        converted_other = self.__try_conversion(other)
+        comp = self.__MAPPED_FLOAT_COMPARATORS[comparator_index]
+        self_as_float = float(self)
+        other_as_float = float(converted_other)
+        if equality:
+            if self._precision is None or converted_other.precision is None:
+                comp_equal = self.__MAPPED_FLOAT_COMPARATORS[comparator_index + 1]
+                return comp_equal(self_as_float, other_as_float)
+            if self_as_float == other_as_float and self._precision == converted_other.precision:
+                return True
+        comparisons = \
+            (
+                comp(self_as_float - pow(10, self._precision), other_as_float - pow(10, converted_other.precision)),
+                comp(self_as_float - pow(10, self._precision), other_as_float + pow(10, converted_other.precision)),
+                comp(self_as_float + pow(10, self._precision), other_as_float - pow(10, converted_other.precision)),
+                comp(self_as_float + pow(10, self._precision), other_as_float + pow(10, converted_other.precision)),
+            )
+        return all(comparisons)
 
 
 
