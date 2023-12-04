@@ -47,7 +47,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     is_si               -->     _                   bool        Read Only
     """
 
-    __slots__ = ('_unit_map', '_factor_from_si', '_precision', '_format_cache')
+    __slots__ = ('_unit_map', '_factor_from_si', '_precision', '_significant_digits', '_format_cache')
 
     _UNIT_DETECTION_REGEXP = compile(r'^(?P<prefix>da|[YZEPTGMkKhHdcmµnpfazy])?(?P<symbol>[a-zA-Z]+)(?P<exponent>-?[0-9]+)?$')
     _NUMBER_DETECTION_REGEXP = compile(r'^[0123456789.-]+')
