@@ -354,7 +354,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if precision is not None:
             if not isinstance(precision, int):
                 raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
-            self._significant_digits = ceil(log10(abs(float(value)))) + precision
+            self._significant_digits = max(1, ceil(log10(abs(float(value)))) + precision)
         self._format_cache = dict()
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
@@ -892,7 +892,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             return return_value
         if notation == 'e':
             e_decimals = 6 if self._precision is None else self._significant_digits - 1
-            return_value = f"{float(self):.{e_decimals}e}{symbol}"
+            return_value = f"{self_rounded:.{e_decimals}e}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
         if notation == 'eng':
