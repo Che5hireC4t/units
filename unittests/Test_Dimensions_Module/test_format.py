@@ -110,3 +110,12 @@ def test_format_plain(test_data):
     real_string = f"{length}"
     assert expected_string == real_string
     return
+
+
+@pytest.mark.parametrize('test_data', NUMBERS_FORMAT_PLAIN)
+def test_format_scientific(test_data):
+    length = Length(test_data['test'], 'm', test_data['precision'])
+    expected_string = test_data['expected e']
+    real_string = f"{length:e}"
+    assert expected_string == real_string
+    return
