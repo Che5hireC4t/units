@@ -893,7 +893,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if notation == 'e':
             e_decimals = 6 if self._precision is None else self._significant_digits - 1
             if self_rounded == 0.0:
-                return_value = f"0e-{decimal_places}{symbol}"
+                exponent_sign = '-' if decimal_places >= 0 else '+'
+                return_value = f"0e{exponent_sign}{abs(decimal_places):02d}{symbol}"
             else:
                 return_value = f"{self_rounded:.{e_decimals}e}{symbol}"
             self._format_cache[format_spec] = return_value
