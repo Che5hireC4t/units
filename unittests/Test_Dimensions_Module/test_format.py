@@ -1,3 +1,7 @@
+import pytest
+from dimensions import Length
+
+
 NUMBERS_FORMAT_PLAIN = \
     (
         {
@@ -97,3 +101,12 @@ NUMBERS_FORMAT_PLAIN = \
             "expected eng": "0e-18"
         },
     )
+
+
+@pytest.mark.parametrize('test_data', NUMBERS_FORMAT_PLAIN)
+def test_format_plain(test_data):
+    length = Length(test_data['test'], 'm', test_data['precision'])
+    expected_string = test_data['expected']
+    real_string = f"{length}"
+    assert expected_string == real_string
+    return
