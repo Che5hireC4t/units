@@ -900,13 +900,14 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             return return_value
         if notation == 'eng':
             exponent = int(floor(log10(abs(self_rounded))))
-            exponent -= exponent % 3
+            exponent_modulo = exponent % 3
+            exponent -= exponent_modulo
             displayed_number = self_rounded / pow(10, exponent)
             exponent_sign = '+' if exponent >= 0 else '-'
             if self._precision is None:
                 decimal_places = 6
             else:
-                decimal_places = self._significant_digits - exponent
+                decimal_places = self._significant_digits - exponent_modulo - 1
             return_value = f"{displayed_number:.{decimal_places}f}e{exponent_sign}{abs(exponent):02d}{symbol}"
             self._format_cache[format_spec] = return_value
             return return_value
