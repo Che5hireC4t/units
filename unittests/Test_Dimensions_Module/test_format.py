@@ -56,9 +56,9 @@ NUMBERS_FORMAT_PLAIN = \
             "test": 123456789.123456,
             "precision": -3,
             "significant digits": 6,
-            "expected": "123458000",
-            "expected e": "1.23458e+08",
-            "expected eng": "123.458e+06"
+            "expected": "123457000",
+            "expected e": "1.23457e+08",
+            "expected eng": "123.457e+06"
         },
         {
             "test": 0.0000000000000000000789,
