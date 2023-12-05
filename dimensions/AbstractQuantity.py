@@ -487,7 +487,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         int __add__ magic method is called, which casts the second member as a simple float.
         """
         converted_other = self.__try_conversion(other)
-        return self.__class__(float(self) + float(converted_other), self.symbol)
+        if self._precision is None or other._precision is None:
+            new_precision = None
+        else:
+            new_precision = min(self._precision, other._precision)
+        return self.__class__(float(self) + float(converted_other), self.symbol, precision=new_precision)
 
 
 
