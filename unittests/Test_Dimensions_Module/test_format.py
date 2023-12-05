@@ -115,7 +115,7 @@ NUMBERS_FORMAT_PLAIN = \
             "expected": "0.000000000000000000",
             "expected e": "0e-18",
             "expected eng": "0e-18"
-        },
+        }
     )
 
 
