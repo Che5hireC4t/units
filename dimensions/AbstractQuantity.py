@@ -381,6 +381,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             if not isinstance(precision, int):
                 raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
             self._significant_digits = self.__calculate_significant_digits(precision)
+        else:
+            self._significant_digits = None
         self._format_cache = dict()
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
