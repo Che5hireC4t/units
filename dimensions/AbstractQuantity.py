@@ -47,7 +47,16 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     is_si               -->     _                   bool        Read Only
     """
 
-    __slots__ = ('_unit_map', '_factor_from_si', '_precision', '_significant_digits', '_format_cache')
+    __slots__ = \
+        (
+            '_unit_map',
+            '_factor_from_si',
+            '_precision',
+            '_significant_digits',
+            '_format_cache',
+            '__log10',
+            '__ceil_log10'
+        )
 
     _UNIT_DETECTION_REGEXP = compile(r'^(?P<prefix>da|[YZEPTGMkKhHdcmµnpfazy])?(?P<symbol>[a-zA-Z]+)(?P<exponent>-?[0-9]+)?$')
     _NUMBER_DETECTION_REGEXP = compile(r'^[0123456789.-]+')
@@ -366,6 +375,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
     def __init__(self, value: int | float | str, unit: str = None, precision: int | None = None) -> None:
         self._precision = precision
+        self.__log10 = log10(abs(float(self)))
+        self.__ceil_log10 = ceil(self.__log10)
         if precision is not None:
             if not isinstance(precision, int):
                 raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
@@ -1229,9 +1240,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         >>> self.__calculate_significant_digits(2)
         5
         """
-        self_log10 = log10(abs(float(self)))
-        ceil_self_log10 = ceil(self_log10)
-        if self_log10 != ceil_self_log10:
+        ceil_self_log10 = self.__ceil_log10
+        if self.__log10 != ceil_self_log10:
             # This is the standard case in 99% of cases.
             return max(1, ceil_self_log10 + precision)
         # We get there for instance if self is a perfect power of ten (1, 1.0, 100.0, etc...)
@@ -1265,13 +1275,12 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         >>> obj.__calculate_precision(5)
         2
         """
-        self_log10 = log10(abs(self))
-        ceil_self_log10 = ceil(self_log10)
-        if self_log10 != ceil_self_log10:
+        ceil_self_log10 = self.__ceil_log10
+        if self.__log10 != ceil_self_log10:
             # This is the standard case in 99% of cases.
-            return significant_digits - ceil(self_log10)
+            return significant_digits - ceil_self_log10
         # We get there for instance if self is a perfect power of ten (1, 1.0, 100.0, etc...)
-        return significant_digits - ceil(self_log10) - 1
+        return significant_digits - ceil_self_log10 - 1
 
 
 
