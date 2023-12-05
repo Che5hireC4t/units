@@ -398,7 +398,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
                 raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
             self._precision = precision
             self._significant_digits = self.__calculate_significant_digits(precision)
-        elif significant_digits is not None and precision is not None:
+        elif significant_digits is not None and precision is None:
             self.__log10 = log10(abs(float(self)))
             self.__ceil_log10 = ceil(self.__log10)
             if not isinstance(significant_digits, int):
