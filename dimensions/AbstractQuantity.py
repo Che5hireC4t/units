@@ -535,7 +535,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         and 1.0 m sec-1 (Speed): dimensions are different.
         """
         converted_other = self.__try_conversion(other)
-        return self.__class__(float(self) - float(converted_other), self.symbol)
+        if self._precision is None or other.precision is None:
+            new_precision = None
+        else:
+            new_precision = min(self._precision, other.precision)
+        return self.__class__(float(self) - float(converted_other), self.symbol, precision=new_precision)
 
 
 
