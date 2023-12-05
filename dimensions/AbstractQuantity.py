@@ -713,7 +713,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
                 for context in self._unit_map
             ]
         inverted_symbol = self.__get_unit_label(sorted(new_unit_context, reverse=True, key=lambda x: x.exponent))
-        return inverted_class(1.0/float(self), inverted_symbol)
+        return inverted_class(1.0/float(self), inverted_symbol, significant_digits=self._significant_digits)
 
 
 
