@@ -276,17 +276,10 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         dimensions.exceptions.IncompatibleUnitError.IncompatibleUnitError: sec is incompatible with km
         """
         try:
-            new_quantity = self.__class__(float(self), new_unit)
+            new_quantity = self.__class__(float(self), new_unit, significant_digits=self._significant_digits)
         except (LookupError, ValueError):
             raise IncompatibleUnitError(f"{new_unit} is incompatible with {self.symbol}") from None
         conversion_factor = self._factor_from_si / new_quantity.factor_from_si
-        if self._precision is None:
-            new_quantity._precision = None
-            new_quantity._significant_digits = None
-        else:
-            new_precision = new_quantity.__calculate_precision(self._significant_digits)
-            new_quantity._significant_digits = self._significant_digits
-            new_quantity._precision = new_precision
         return new_quantity * conversion_factor
 
 
@@ -602,11 +595,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         float __mul__ method is called, which casts the second member as a simple float.
         """
         if type(other) in (float, int) or isinstance(other, number):  # number => numpy.core.number
-            new_quantity = self.__class__(float(self) * other, self.symbol)
-            if self._significant_digits is not None:
-                new_quantity._precision = new_quantity.__calculate_precision(self._significant_digits)
-                new_quantity._significant_digits = self._significant_digits
-            return new_quantity
+            return self.__class__(float(self) * other, self.symbol, significant_digits=self._significant_digits)
         other_class = other.__class__
         result_class = self.__class__ * other_class
         self_unit_map = self._unit_map.copy()
@@ -640,11 +629,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         for dimension_class in other_specific_dimensions:
             final_unit_map.append(other_unit_map_dict[dimension_class])
         final_symbol = self.__get_unit_label(final_unit_map)
-        new_quantity = result_class(float(self_aligned) * float(other), final_symbol)
-        if self._significant_digits is not None:
-            new_quantity._precision = new_quantity.__calculate_precision(self._significant_digits)
-            new_quantity._significant_digits = self._significant_digits
-        return new_quantity
+        return result_class(float(self_aligned) * float(other), final_symbol, significant_digits=self._significant_digits)
 
 
 
