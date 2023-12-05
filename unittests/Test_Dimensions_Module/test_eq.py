@@ -7,6 +7,8 @@ TESTS = \
         (Mass(1, 'g', None), Mass(1, 'g', None), True),
         (Mass(1, 'g', 3), Mass(1, 'g', None), True),
         (Mass(1, 'g', 3), Mass(1, 'g', 1), False),
+        (Mass(1, 'g', 3), Mass(1, 'g', 3), True),
+        (Mass(1, 'g', 3), Mass(2, 'g', 3), False),
     )
 
 
