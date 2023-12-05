@@ -1239,6 +1239,42 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def __calculate_precision(self: float, significant_digits: int) -> int:
+        """
+        Calculate the precision needed to reach a specified number of significant digits for the float object.
+
+        This method computes the precision (number of digits after the decimal point) for the current object,
+        to achieve a given number of significant digits.
+        It is essentially the reverse operation of __calculate_significant_digits method.
+
+        The method calculates the logarithm base 10 of the absolute value of `self`,
+        and then determines the necessary precision based on this logarithmic value and the provided significant digits.
+        Generally, the calculation involves subtracting the ceiling of the logarithm from the significant digits.
+        However, for numbers that are exact powers of ten, an additional adjustment is made to the calculation.
+
+        Note:
+        - This method is designed for internal use within the class.
+        - It is useful in contexts where a specific number of significant digits is required,
+          and the corresponding precision needs to be determined.
+
+        :param significant_digits: An integer representing the desired number of significant digits.
+        :return: Returns an integer representing the calculated precision.
+
+        Example:
+        >>> obj = 123.45
+        >>> obj.__calculate_precision(5)
+        2
+        """
+        self_log10 = log10(abs(self))
+        ceil_self_log10 = ceil(self_log10)
+        if self_log10 != ceil_self_log10:
+            # This is the standard case in 99% of cases.
+            return significant_digits - ceil(self_log10)
+        # We get there for instance if self is a perfect power of ten (1, 1.0, 100.0, etc...)
+        return significant_digits - ceil(self_log10) - 1
+
+
+
     def __run_diagnostic(self, value: int | float | str, unit: str, error_object: Exception) -> None:
         if isinstance(value, (int, float)) and not unit:
             raise MissingUnitException(f"No unit was provided for value {value}") from None
