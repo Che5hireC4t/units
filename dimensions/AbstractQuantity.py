@@ -364,7 +364,14 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
     #    Object handling    #
     #-----------------------#
 
-    def __new__(cls, value: int | float | str, unit: str = '', precision: int | None = None):
+    def __new__\
+            (
+                cls,
+                value: int | float | str,
+                unit: str = '',
+                precision: int | None = None,
+                significant_digits: int | None = None
+            ):
         try:
             return super(AbstractQuantity, cls).__new__(cls, value)
         except ValueError:  # If value is a string with a unit :
@@ -373,16 +380,34 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
-    def __init__(self, value: int | float | str, unit: str = None, precision: int | None = None) -> None:
-        self._precision = precision
-        self.__log10 = log10(abs(float(self)))
-        self.__ceil_log10 = ceil(self.__log10)
-        if precision is not None:
+    def __init__\
+            (
+                self,
+                value: int | float | str,
+                unit: str = '',
+                precision: int | None = None,
+                significant_digits: int | None = None
+            ) -> None:
+        if significant_digits is None and precision is None:
+            self._precision = None
+            self._significant_digits = None
+        elif significant_digits is None and precision is not None:
+            self.__log10 = log10(abs(float(self)))
+            self.__ceil_log10 = ceil(self.__log10)
             if not isinstance(precision, int):
                 raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
+            self._precision = precision
             self._significant_digits = self.__calculate_significant_digits(precision)
+        elif significant_digits is not None and precision is not None:
+            self.__log10 = log10(abs(float(self)))
+            self.__ceil_log10 = ceil(self.__log10)
+            if not isinstance(significant_digits, int):
+                raise TypeError(f"significant digits must be an int or None. Here, it is of type {(str(type(precision)))}.")
+            self._significant_digits = significant_digits
+            self._precision = self.__calculate_precision(significant_digits)
         else:
-            self._significant_digits = None
+            msg = 'precision and significant digits cannot be set at same time, because one is computed from the other.'
+            raise ArithmeticError(msg)
         self._format_cache = dict()
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
