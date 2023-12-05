@@ -271,6 +271,13 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         except (LookupError, ValueError):
             raise IncompatibleUnitError(f"{new_unit} is incompatible with {self.symbol}") from None
         conversion_factor = self._factor_from_si / new_quantity.factor_from_si
+        if self._precision is None:
+            new_quantity._precision = None
+            new_quantity._significant_digits = None
+        else:
+            new_quantity._precision = floor(log10(abs(float(new_quantity)))) - self._significant_digits + 1
+            new_quantity._significant_digits = self._significant_digits
+            assert new_quantity._significant_digits == max(1, ceil(log10(abs(float(new_quantity)))) + new_quantity._precision)
         return new_quantity * conversion_factor
 
 
@@ -362,7 +369,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         if precision is not None:
             if not isinstance(precision, int):
                 raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
-            self._significant_digits = max(1, ceil(log10(abs(float(value)))) + precision)
+            self._significant_digits = self.__calculate_significant_digits(precision)
         self._format_cache = dict()
         try:
             self._unit_map, self._factor_from_si = self.__class__.__context_cache[(self.__class__, unit)]
@@ -1192,6 +1199,43 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
                 comp(self_as_float + pow(10, self._precision), other_as_float + pow(10, converted_other.precision)),
             )
         return all(comparisons)
+
+
+
+    def __calculate_significant_digits(self, precision: int) -> int:
+        """
+        Calculate the number of significant digits for the object based on a specified precision.
+
+        This method computes the number of significant digits for the current object.
+        The calculation is based on the logarithmic value of the absolute float representation of the object
+        and a given precision.
+
+        The calculation involves finding the logarithm base 10 of the absolute value
+        of the float representation of `self`. The number of significant digits is then determined
+        based on this logarithmic value and the provided precision.
+        In most cases, this involves adding the ceiling of the logarithm to the precision.
+        However, for numbers that are exact powers of ten, an additional digit is added to the result.
+
+        Note:
+        - This method is intended for internal use within the class and is not part of the public interface.
+        - It is particularly useful for determining the display format or for calculations requiring
+          a specific number of significant digits. See __format__ magic method.
+
+        :param precision: An integer specifying the precision to be used in the calculation.
+        :return: Returns an integer representing the number of significant digits.
+
+        Example:
+        >>> self = 123.45
+        >>> self.__calculate_significant_digits(2)
+        5
+        """
+        self_log10 = log10(abs(float(self)))
+        ceil_self_log10 = ceil(self_log10)
+        if self_log10 != ceil_self_log10:
+            # This is the standard case in 99% of cases.
+            return max(1, ceil_self_log10 + precision)
+        # We get there for instance if self is a perfect power of ten (1, 1.0, 100.0, etc...)
+        return max(1, ceil_self_log10 + precision + 1)
 
 
 
