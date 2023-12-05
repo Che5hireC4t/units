@@ -284,9 +284,9 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             new_quantity._precision = None
             new_quantity._significant_digits = None
         else:
-            new_quantity._precision = floor(log10(abs(float(new_quantity)))) - self._significant_digits + 1
+            new_precision = new_quantity.__calculate_precision(self._significant_digits)
             new_quantity._significant_digits = self._significant_digits
-            assert new_quantity._significant_digits == max(1, ceil(log10(abs(float(new_quantity)))) + new_quantity._precision)
+            new_quantity._precision = new_precision
         return new_quantity * conversion_factor
 
 
@@ -1439,7 +1439,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             error_message = f"Impossible to compare {self} ({self.__class__.__name__}) " \
                             f"and {other} ({other.__class__.__name__}): dimensions are different."
             raise IncompatibleUnitError(error_message)
-        return other.convert(self.symbol)
+        converted_other = other.convert(self.symbol)
+        return converted_other
 
 
 
