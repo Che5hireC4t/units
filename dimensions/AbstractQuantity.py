@@ -577,7 +577,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         float __mul__ method is called, which casts the second member as a simple float.
         """
         if type(other) in (float, int) or isinstance(other, number):  # number => numpy.core.number
-            return self.__class__(float(self) * other, self.symbol)
+            new_quantity = self.__class__(float(self) * other, self.symbol)
+            if self._significant_digits is not None:
+                new_quantity._precision = new_quantity.__calculate_precision(self._significant_digits)
+                new_quantity._significant_digits = self._significant_digits
+            return new_quantity
         other_class = other.__class__
         result_class = self.__class__ * other_class
         self_unit_map = self._unit_map.copy()
@@ -611,7 +615,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         for dimension_class in other_specific_dimensions:
             final_unit_map.append(other_unit_map_dict[dimension_class])
         final_symbol = self.__get_unit_label(final_unit_map)
-        return result_class(float(self_aligned) * float(other), final_symbol)
+        new_quantity = result_class(float(self_aligned) * float(other), final_symbol)
+        if self._significant_digits is not None:
+            new_quantity._precision = new_quantity.__calculate_precision(self._significant_digits)
+            new_quantity._significant_digits = self._significant_digits
+        return new_quantity
 
 
 
