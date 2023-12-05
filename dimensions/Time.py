@@ -43,7 +43,14 @@ class Time(AbstractQuantity):
 
 
 
-    def __new__(cls, value: int | float | str | timedelta, unit: str = ''):
+    def __new__\
+            (
+                cls,
+                value: int | float | str | timedelta,
+                unit: str = '',
+                precision: int | None = None,
+                significant_digits: int | None = None
+            ):
         if isinstance(value, timedelta):
             return super(AbstractQuantity, cls).__new__(cls, *cls.__extract_from_timedelta(value))
         try:
