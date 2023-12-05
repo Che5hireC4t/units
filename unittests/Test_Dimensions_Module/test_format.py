@@ -5,6 +5,14 @@ from dimensions import Length
 NUMBERS_FORMAT_PLAIN = \
     (
         {
+            "test": 1,
+            "precision": 1,
+            "significant digits": 2,
+            "expected": "1.0",
+            "expected e": "1.0e+00",
+            "expected eng": "1.0e+00"
+        },
+        {
             "test": 56.789,
             "precision": 5,
             "significant digits": 7,
