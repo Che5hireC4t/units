@@ -419,7 +419,11 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         The "hashable" behavior (and thus this magic method) is mandatory
         to put such an object in a set or as keys in dictionaries.
         """
-        return hash(float(self) + 2 * hash(self.__class__) + 3 * self.precision)
+        if self._significant_digits is None:
+            sd_hash = 0
+        else:
+            sd_hash = self._significant_digits
+        return hash(float(self) + 2 * hash(self.__class__) + 3 * sd_hash)
 
 
 
