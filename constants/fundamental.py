@@ -23,7 +23,7 @@ ELEMENTARY_CHARGE = ElectricCharge(1.602176634e-19, 'A sec', significant_digits=
 BOLTZMANN_CONSTANT = Entropy(1.380649e-23, 'J K-1', significant_digits=7)
 
 # https://en.wikipedia.org/wiki/Avogadro_constant
-AVOGADRO_CONSTANT = ~SubstanceAmount(6.02214076e23, 'mol-1', significant_digits=9)
+AVOGADRO_CONSTANT = ~SubstanceAmount(6.02214076e23, 'mol-1', significant_digits=24)
 
 # https://en.wikipedia.org/wiki/Gravitational_constant
 # https://physics.nist.gov/cgi-bin/cuu/Value?bg
