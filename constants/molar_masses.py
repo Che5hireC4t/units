@@ -12,7 +12,7 @@ OXYGEN = MolarMass(15.999, 'g mol-1', precision=3)
 SULFUR = MolarMass(32.066, 'g mol-1', precision=3)
 
 # Molecules, sorted in alphabetical order
-CARBON_DIOXIDE = CARBON + OXYGEN * 2
-HYDROGEN_SULFIDE = SULFUR + HYDROGEN * 2
-SULFUR_DIOXIDE = SULFUR + OXYGEN * 2
-WATER = OXYGEN + HYDROGEN * 2
+CARBON_DIOXIDE = MolarMass(44.009, 'g mol-1', precision=3)
+HYDROGEN_SULFIDE = MolarMass(34.082, 'g mol-1', precision=3)
+SULFUR_DIOXIDE = MolarMass(64.066, 'g mol-1', precision=3)
+WATER = MolarMass(18.015, 'g mol-1', precision=3)
