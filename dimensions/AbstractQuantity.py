@@ -1230,6 +1230,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
                 return comp_equal(self_as_float, other_as_float)
             if self_as_float == other_as_float and self._precision == converted_other.precision:
                 return True
+        if self._precision is None or converted_other.precision is None:
+            return comp(self_as_float, other_as_float)
         comparisons = \
             (
                 comp(self_as_float - pow(10, self._precision), other_as_float - pow(10, converted_other.precision)),
