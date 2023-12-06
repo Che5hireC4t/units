@@ -54,10 +54,16 @@ class Time(AbstractQuantity):
         if isinstance(value, timedelta):
             return super(AbstractQuantity, cls).__new__(cls, *cls.__extract_from_timedelta(value))
         try:
-            return super(Time, cls).__new__(cls, value)
+            return super(Time, cls).__new__(cls, value, precision=precision, significant_digits=significant_digits)
         except ValueError:  # If value is a string with a unit :
             value_without_unit = cls._strip_unit_chars(value)
-            return super(Time, cls).__new__(cls, value_without_unit)
+            return super(Time, cls).__new__\
+                (
+                    cls,
+                    value_without_unit,
+                    precision=precision,
+                    significant_digits=significant_digits
+                )
 
 
 
