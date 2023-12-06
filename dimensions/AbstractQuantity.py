@@ -1224,13 +1224,15 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         comp = self.__MAPPED_FLOAT_COMPARATORS[comparator_index]
         self_as_float = float(self)
         other_as_float = float(converted_other)
+        self_precision = self._precision
+        converted_other_precision = converted_other.precision
         if equality:
-            if self._precision is None or converted_other.precision is None:
+            if self_precision is None or converted_other_precision is None:
                 comp_equal = self.__MAPPED_FLOAT_COMPARATORS[comparator_index + 1]
                 return comp_equal(self_as_float, other_as_float)
-            if self_as_float == other_as_float and self._precision == converted_other.precision:
+            if self_as_float == other_as_float and self_precision == converted_other_precision:
                 return True
-        if self._precision is None or converted_other.precision is None:
+        if self_precision is None or converted_other_precision is None:
             return comp(self_as_float, other_as_float)
         comparisons = \
             (
