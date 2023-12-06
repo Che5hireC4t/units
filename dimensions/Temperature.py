@@ -20,24 +20,59 @@ class Temperature(AbstractQuantity):
 
 
 
-    def __new__(cls, value: int | float | str, unit: str = '') -> AbstractQuantity:
+    def __new__\
+            (
+                cls,
+                value: int | float | str,
+                unit: str = '',
+                precision: int | None = None,
+                significant_digits: int | None = None
+            ) -> AbstractQuantity:
         unit = unit.lstrip('°')
         if unit == 'F':
-            return super(Temperature, cls).__new__(cls, cls.__fahrenheit_to_kelvin(value), 'K')
+            return super(Temperature, cls).__new__\
+                (
+                    cls,
+                    cls.__fahrenheit_to_kelvin(value),
+                    'K',
+                    precision=precision,
+                    significant_digits=significant_digits
+                )
         if unit == 'C':
-            return super(Temperature, cls).__new__(cls, value - cls.__ABSOLUTE_ZERO, 'K')
+            return super(Temperature, cls).__new__\
+                (
+                    cls,
+                    value - cls.__ABSOLUTE_ZERO,
+                    'K',
+                    precision=precision,
+                    significant_digits=significant_digits
+                )
         if unit == 'B':
-            return super(Temperature, cls).__new__(cls, cls.__benamran_to_kelvin(value), 'K')
-        return super(Temperature, cls).__new__(cls, value, unit)
+            return super(Temperature, cls).__new__\
+                (
+                    cls,
+                    cls.__benamran_to_kelvin(value),
+                    'K',
+                    precision=precision,
+                    significant_digits=significant_digits
+                )
+        return super(Temperature, cls).__new__(cls, value, unit, precision, significant_digits)
 
 
 
-    def __init__(self, value: int | float | str, unit: str) -> None:
+    def __init__\
+            (
+                cls,
+                value: int | float | str,
+                unit: str = '',
+                precision: int | None = None,
+                significant_digits: int | None = None
+            ) -> None:
         unit = unit.lstrip('°')
         if unit in ('F', 'C', 'B'):
-            super().__init__(value, 'K')
+            super().__init__(value, 'K', precision, significant_digits)
             return
-        super().__init__(value, unit)
+        super().__init__(value, unit, precision, significant_digits)
         return
 
 
