@@ -10,10 +10,19 @@ class _NullDimension(AbstractQuantity):
     _DIMENSIONAL_ARRAY = DimensionalArray()
 
 
-    def __new__(cls, value: int | float | str, unit=None):
+    def __new__\
+            (
+                cls,
+                value: int | float | str,
+                unit: str = '',
+                precision: int | None = None,
+                significant_digits: int | None = None
+            ):
         """
         @value          int, float, str         A numeric value
         @unit           Any                     Ignored. Just there for compatibility issues
+        @precision      Any                     Ignored. Just there for compatibility issues
+        @sig_dig        Any                     Ignored. Just there for compatibility issues
 
         This method just returns value cast as a float.
         """
