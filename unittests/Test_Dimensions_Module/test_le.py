@@ -14,7 +14,7 @@ TESTS = \
 
 
 @pytest.mark.parametrize('test_data', TESTS)
-def test_ne(test_data) -> None:
+def test_le(test_data) -> None:
     value1, value2, expected_result = test_data
     real_result = value1 <= value2
     assert real_result == expected_result
