@@ -1234,12 +1234,14 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
                 return True
         if self_precision is None or converted_other_precision is None:
             return comp(self_as_float, other_as_float)
+        self_10pow = -1 * self_precision
+        converted_other_10pow = -1 * converted_other_precision
         comparisons = \
             (
-                comp(self_as_float - pow(10, self._precision), other_as_float - pow(10, converted_other.precision)),
-                comp(self_as_float - pow(10, self._precision), other_as_float + pow(10, converted_other.precision)),
-                comp(self_as_float + pow(10, self._precision), other_as_float - pow(10, converted_other.precision)),
-                comp(self_as_float + pow(10, self._precision), other_as_float + pow(10, converted_other.precision)),
+                comp(self_as_float - pow(10, self_10pow), other_as_float - pow(10, converted_other_10pow)),
+                comp(self_as_float - pow(10, self_10pow), other_as_float + pow(10, converted_other_10pow)),
+                comp(self_as_float + pow(10, self_10pow), other_as_float - pow(10, converted_other_10pow)),
+                comp(self_as_float + pow(10, self_10pow), other_as_float + pow(10, converted_other_10pow)),
             )
         return all(comparisons)
 
