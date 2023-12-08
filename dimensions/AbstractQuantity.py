@@ -653,7 +653,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         for dimension_class in other_specific_dimensions:
             final_unit_map.append(other_unit_map_dict[dimension_class])
         final_symbol = self.__get_unit_label(final_unit_map)
-        new_sigfigs = self.__get_new_significant_digits(other)
+        new_sigfigs = self.__get_new_precision_or_significant_digits(other, False)
         return result_class(float(self_aligned) * float(other), final_symbol, significant_digits=new_sigfigs)
 
 
@@ -1204,42 +1204,47 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
-    def __get_new_significant_digits(self, other) -> int | None:
+    def __get_new_precision_or_significant_digits(self, other, precision: bool) -> int | None:
         """
-        Determine the appropriate number of significant digits when comparing or combining `self` with another object.
+        Determine the appropriate precision or number of significant digits
+        when comparing or combining `self` with another object, based on a specified mode.
 
-        This method calculates the number of significant digits that should be used when `self`
+        This method calculates either the precision or the number of significant digits to be used when `self`
         (an instance of a class inheriting from `float`) is involved in an operation with another object `other`.
-        The calculation is based on the significant digits of both `self` and `other`.
+        The specific calculation (precision or significant digits) is determined by the `precision` boolean flag.
 
-        The method first checks if the significant digits of both `self` and `other` are None.
-        If both are None, it returns None. If neither is None, it returns the minimum of the two significant digits.
-        If one is None, it returns the significant digits of the one that is not None.
-        The method includes a safety check and raises a NotImplementedError if an unexpected condition occurs,
-        which indicates a potential issue in the program design.
+        The method operates by first deciding whether to work with precision or significant digits
+        based on the `precision` parameter. It then follows a logic similar to the individual calculations
+        for precision and significant digits, returning the appropriate minimum value,
+        or handling cases where one or both values are None.
 
         Note:
-        - This method is intended for internal use and is crucial
-          for operations that depend on the precision of the floating-point numbers.
-        - It ensures consistency in the level of precision used in calculations involving multiple objects.
+        - This method is intended for internal use within the class.
+        - It provides flexibility in handling calculations that may require either precision or significant digits,
+          depending on the context.
 
         :param other: The other object to compare or combine with `self`.
-        :return: Returns the minimum number of significant digits between `self` and `other` if both are not None.
-                 Returns the significant digits of the one that is not None if the other is None.
+        :param precision: A boolean flag indicating whether to calculate precision (True) or significant digits (False).
+        :return: Returns the minimum value between `self` and `other` in terms of precision or significant digits,
+                 based on the `precision` flag. Returns the value of the one that is not None if the other is None.
                  Returns None if both are None. Raises a NotImplementedError if an unexpected condition occurs.
         """
-        other_significant_digits = other._significant_digits
-        self_significant_digits = self._significant_digits
-        self_sd_is_none = self_significant_digits is None
-        other_sd_is_none = other_significant_digits is None
+        if precision:
+            other_uncertainty = other._precision
+            self_uncertainty = self._precision
+        else:
+            other_uncertainty = other._significant_digits
+            self_uncertainty = self._significant_digits
+        self_sd_is_none = self_uncertainty is None
+        other_sd_is_none = other_uncertainty is None
         if self_sd_is_none and other_sd_is_none:
             return None
         if not self_sd_is_none and not other_sd_is_none:
-            return min(self_significant_digits, other_significant_digits)
+            return min(self_uncertainty, other_uncertainty)
         if self_sd_is_none:
-            return other_significant_digits
+            return other_uncertainty
         if other_sd_is_none:
-            return self_significant_digits
+            return self_uncertainty
         raise NotImplementedError('If this happens, something is really wrong in the program conception.')
 
 
