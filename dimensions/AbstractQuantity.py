@@ -385,19 +385,31 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
             self._precision = None
             self._significant_digits = None
         elif significant_digits is None and precision is not None:
-            self.__log10 = log10(abs(float(self)))
-            self.__ceil_log10 = ceil(self.__log10)
-            if not isinstance(precision, int):
-                raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
-            self._precision = precision
-            self._significant_digits = self.__calculate_significant_digits(precision)
+            try:
+                self.__log10 = log10(abs(float(self)))
+                self.__ceil_log10 = ceil(self.__log10)
+                if not isinstance(precision, int):
+                    raise TypeError(f"precision must be an int or None. Here, it is of type {(str(type(precision)))}.")
+                self._precision = precision
+                self._significant_digits = self.__calculate_significant_digits(precision)
+            except ValueError:  # This happens if self == 0
+                self.__log10 = -1 * float('inf')
+                self.__ceil_log10 = -1 * float('inf')
+                self._precision = precision
+                self._significant_digits = precision + 1
         elif significant_digits is not None and precision is None:
-            self.__log10 = log10(abs(float(self)))
-            self.__ceil_log10 = ceil(self.__log10)
-            if not isinstance(significant_digits, int):
-                raise TypeError(f"significant digits must be an int or None. Here, it is of type {(str(type(precision)))}.")
-            self._significant_digits = significant_digits
-            self._precision = self.__calculate_precision(significant_digits)
+            try:
+                self.__log10 = log10(abs(float(self)))
+                self.__ceil_log10 = ceil(self.__log10)
+                if not isinstance(significant_digits, int):
+                    raise TypeError(f"significant digits must be an int or None. Here, it is of type {(str(type(precision)))}.")
+                self._significant_digits = significant_digits
+                self._precision = self.__calculate_precision(significant_digits)
+            except ValueError:  # This happens if self == 0
+                self.__log10 = -1 * float('inf')
+                self.__ceil_log10 = -1 * float('inf')
+                self._significant_digits = significant_digits
+                self._precision = significant_digits - 1
         else:
             msg = 'precision and significant digits cannot be set at same time, because one is computed from the other.'
             raise ArithmeticError(msg)
