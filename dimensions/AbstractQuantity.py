@@ -503,10 +503,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         int __add__ magic method is called, which casts the second member as a simple float.
         """
         converted_other = self.__try_conversion(other)
-        if self._precision is None or other.precision is None:
-            new_precision = None
-        else:
-            new_precision = min(self._precision, other.precision)
+        new_precision = self.__get_new_precision_or_significant_digits(converted_other, True)
         return self.__class__(float(self) + float(converted_other), self.symbol, precision=new_precision)
 
 
@@ -551,10 +548,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         and 1.0 m sec-1 (Speed): dimensions are different.
         """
         converted_other = self.__try_conversion(other)
-        if self._precision is None or other.precision is None:
-            new_precision = None
-        else:
-            new_precision = min(self._precision, other.precision)
+        new_precision = self.__get_new_precision_or_significant_digits(converted_other, True)
         return self.__class__(float(self) - float(converted_other), self.symbol, precision=new_precision)
 
 
