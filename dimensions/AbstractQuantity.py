@@ -653,7 +653,8 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
         for dimension_class in other_specific_dimensions:
             final_unit_map.append(other_unit_map_dict[dimension_class])
         final_symbol = self.__get_unit_label(final_unit_map)
-        return result_class(float(self_aligned) * float(other), final_symbol, significant_digits=self._significant_digits)
+        new_sigfigs = self.__get_new_significant_digits(other)
+        return result_class(float(self_aligned) * float(other), final_symbol, significant_digits=new_sigfigs)
 
 
 
