@@ -1203,6 +1203,46 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
 
+    def __get_new_significant_digits(self, other) -> int | None:
+        """
+        Determine the appropriate number of significant digits when comparing or combining `self` with another object.
+
+        This method calculates the number of significant digits that should be used when `self`
+        (an instance of a class inheriting from `float`) is involved in an operation with another object `other`.
+        The calculation is based on the significant digits of both `self` and `other`.
+
+        The method first checks if the significant digits of both `self` and `other` are None.
+        If both are None, it returns None. If neither is None, it returns the minimum of the two significant digits.
+        If one is None, it returns the significant digits of the one that is not None.
+        The method includes a safety check and raises a NotImplementedError if an unexpected condition occurs,
+        which indicates a potential issue in the program design.
+
+        Note:
+        - This method is intended for internal use and is crucial
+          for operations that depend on the precision of the floating-point numbers.
+        - It ensures consistency in the level of precision used in calculations involving multiple objects.
+
+        :param other: The other object to compare or combine with `self`.
+        :return: Returns the minimum number of significant digits between `self` and `other` if both are not None.
+                 Returns the significant digits of the one that is not None if the other is None.
+                 Returns None if both are None. Raises a NotImplementedError if an unexpected condition occurs.
+        """
+        other_significant_digits = other._significant_digits
+        self_significant_digits = self._significant_digits
+        self_sd_is_none = self_significant_digits is None
+        other_sd_is_none = other_significant_digits is None
+        if self_sd_is_none and other_sd_is_none:
+            return None
+        if not self_sd_is_none and not other_sd_is_none:
+            return min(self_significant_digits, other_significant_digits)
+        if self_sd_is_none:
+            return other_significant_digits
+        if other_sd_is_none:
+            return self_significant_digits
+        raise NotImplementedError('If this happens, something is really wrong in the program conception.')
+
+
+
     def __compare(self, other, comparator_index: int, equality: bool) -> bool:
         """
         Compare the current instance with another object using specified float comparators.
