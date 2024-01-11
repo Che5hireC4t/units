@@ -17,6 +17,7 @@ mistake cost $494.84 million](https://en.wikipedia.org/wiki/Mars_Climate_Orbiter
 # Dependencies
 
 - Numpy
+- Python >= 3.10
 - (pytest, for running the unit tests)
 
 # Installation
