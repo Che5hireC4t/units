@@ -1,3 +1,4 @@
+import time
 from datetime import timedelta
 from .AbstractQuantity import AbstractQuantity, DimensionalArray, Unit
 
@@ -51,6 +52,15 @@ class Time(AbstractQuantity):
         except ValueError:  # If value is a string with a unit :
             value_without_unit = cls._strip_unit_chars(value)
             return super(Time, cls).__new__(cls, value_without_unit)
+
+
+
+    @classmethod
+    def get_now(cls, unit: str = 'sec'):
+        now = cls(time.time(), unit)
+        if unit == 'sec':
+            return now
+        return now.convert(unit)
 
 
 
