@@ -57,7 +57,7 @@ class Time(AbstractQuantity):
 
     @classmethod
     def get_now(cls, unit: str = 'sec'):
-        now = cls(time.time(), unit)
+        now = cls(time.time(), 'sec')
         if unit == 'sec':
             return now
         return now.convert(unit)
