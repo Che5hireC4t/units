@@ -82,6 +82,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 #   ██║     ╚██████╔╝ ██████╔╝███████╗██║ ╚██████╗     ██║ ╚═╝ ██║ ███████╗   ██║   ██║  ██║ ╚██████╔╝ ██████╔╝ ███████║
 #   ╚═╝      ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═════╝     ╚═╝     ╚═╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝  ╚═════╝  ╚═════╝  ╚══════╝
 
+
     def has_same_dimensions_than(self, value, strict: bool = False) -> bool:
         """
         @param value    AbstractQuantity
