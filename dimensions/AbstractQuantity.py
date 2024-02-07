@@ -183,7 +183,7 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 
 
     def align_to(self, other):
-        if type(self) != type(other):
+        if self.__class__ is not other.__class__:
             raise IncompatibleUnitError(f"{str(self)} and {str(other)} have incompatible unit. Impossible to convert.")
         conversion_factor = self._factor_from_si / other.factor_from_si
         new_unit = other.symbol
