@@ -83,6 +83,16 @@ class AbstractQuantity(float, metaclass=_MetaQuantity):
 #   ╚═╝      ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═════╝     ╚═╝     ╚═╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝  ╚═════╝  ╚═════╝  ╚══════╝
 
 
+    @staticmethod
+    def get_precision_from_uncertainty(uncertainty: float) -> int:
+        magnitude = log10(uncertainty)
+        low = floor(magnitude)
+        up = ceil(magnitude)
+        closeness = {abs(power(10, up) - uncertainty): up, abs(power(10, low) - uncertainty): low}
+        return -1 * closeness[min(closeness.keys())]
+
+
+
     def has_same_dimensions_than(self, value, strict: bool = False) -> bool:
         """
         @param value    AbstractQuantity
